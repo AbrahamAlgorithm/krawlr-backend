@@ -9,7 +9,6 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60  # 24 hours
 
 security = HTTPBearer()
-
 def create_access_token(data: dict):
     """Create a JWT access token"""
     to_encode = data.copy()
