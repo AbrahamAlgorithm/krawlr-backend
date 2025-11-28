@@ -36,6 +36,7 @@ ENV/
 serviceAccount.json
 (Client)serviceAccount.json
 *credentials*.json
+firebase.md
 
 # IDE
 .vscode/

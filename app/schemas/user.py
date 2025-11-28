@@ -28,3 +28,9 @@ class PasswordResetRequest(BaseModel):
 class PasswordResetConfirm(BaseModel):
     token: str
     new_password: str
+
+class TokenRefresh(BaseModel):
+    refreshToken: str
+
+class DeleteAccount(BaseModel):
+    password: str

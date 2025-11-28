@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from firebase_admin import auth as firebase_auth
 import os
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here")
@@ -19,37 +20,67 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Dependency to extract and verify current user from JWT token"""
+def get_current_user(authorization: str = Header(...)):
+    """
+    Dependency to extract and verify current user from Firebase ID token.
+    Expects: Authorization: Bearer <id_token>
+    """
     from app.core.database import db
     
-    token = credentials.credentials
+    # Validate Authorization header format
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Authorization header format. Expected: Bearer <token>"
+        )
+    
+    token = authorization.split(" ")[1]
     
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        detail="Could not validate credentials"
     )
     
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
+        # Verify the Firebase ID token using Admin SDK
+        # This checks signature and expiration locally (very fast)
+        decoded_token = firebase_auth.verify_id_token(token)
+        uid = decoded_token['uid']
+        email = decoded_token.get('email')
+        
+        if not email:
             raise credentials_exception
         
-        # Fetch full user data from Firestore
+        # Fetch additional user data from Firestore
         user_ref = db.collection("users").document(email)
         doc = user_ref.get()
         
-        if not doc.exists:
-            raise credentials_exception
+        if doc.exists:
+            user_data = doc.to_dict()
+            return {
+                "uid": uid,
+                "id": email,
+                "name": user_data.get("name"),
+                "email": email
+            }
+        else:
+            # Return basic Firebase Auth data if no Firestore doc
+            return {
+                "uid": uid,
+                "id": email,
+                "name": decoded_token.get("name", ""),
+                "email": email
+            }
         
-        user_data = doc.to_dict()
-        return {
-            "id": email,
-            "name": user_data.get("name"),
-            "email": user_data.get("email")
-        }
-        
-    except JWTError:
+    except firebase_auth.InvalidIdTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token"
+        )
+    except firebase_auth.ExpiredIdTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired. Please refresh your token."
+        )
+    except Exception as e:
         raise credentials_exception
