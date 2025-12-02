@@ -1,0 +1,94 @@
+┌─────────────────────────────────────────────────────────────────────┐
+│                   🧪 KRAWLR QUICK TEST COMMANDS                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+📋 INTERACTIVE MENU (Easiest!)
+─────────────────────────────────────────────────────────────────────
+  python3 run_tests.py
+
+
+📊 TEST EDGAR (Financial Data - Public Companies)
+─────────────────────────────────────────────────────────────────────
+  python3 tests/test_edgar_standalone.py AAPL
+  python3 tests/test_edgar_standalone.py TSLA MSFT GOOGL
+
+  Output: edgar_output_{TICKER}.json
+
+  Try: AAPL, TSLA, MSFT, GOOGL, AMZN, META, NVDA
+
+
+🌐 TEST WEBSITE (Company Identity - Any Website)
+─────────────────────────────────────────────────────────────────────
+  python3 tests/test_website_standalone.py https://stripe.com
+  python3 tests/test_website_standalone.py stripe.com
+
+  Output: website_output_{DOMAIN}.json
+
+  Try: stripe.com, openai.com, shopify.com, airbnb.com
+
+
+🔍 TEST GOOGLE SEARCH (Market Intelligence)
+─────────────────────────────────────────────────────────────────────
+  python3 tests/test_google_search_standalone.py "Stripe"
+  python3 tests/test_google_search_standalone.py "Stripe" "OpenAI"
+
+  Output: google_search_output_{COMPANY}.json
+
+  Try: "Stripe", "OpenAI", "Anthropic", "Databricks"
+  ⚠️  May be blocked if run too frequently
+
+
+🚀 TEST ALL (Full Integration)
+─────────────────────────────────────────────────────────────────────
+  python3 test_scrapers.py
+
+
+📖 DOCUMENTATION
+─────────────────────────────────────────────────────────────────────
+  TESTING_SUMMARY.md    - Complete testing guide (start here!)
+  TESTING.md            - Quick examples
+  tests/README.md       - Detailed test docs
+
+
+💡 QUICK EXAMPLES
+─────────────────────────────────────────────────────────────────────
+  # Research Apple completely:
+  python3 tests/test_edgar_standalone.py AAPL
+  python3 tests/test_website_standalone.py https://apple.com
+  python3 tests/test_google_search_standalone.py "Apple"
+
+  # Research a startup:
+  python3 tests/test_website_standalone.py https://replicate.com
+  python3 tests/test_google_search_standalone.py "Replicate"
+
+  # Compare competitors:
+  python3 tests/test_website_standalone.py stripe.com square.com
+
+
+📁 OUTPUT FILES
+─────────────────────────────────────────────────────────────────────
+  All tests save JSON files in the current directory:
+  - edgar_output_AAPL.json
+  - website_output_stripe.com.json
+  - google_search_output_stripe.json
+
+
+🔧 TROUBLESHOOTING
+─────────────────────────────────────────────────────────────────────
+  Command not found: python
+  → Use python3 instead
+
+  edgartools not available
+  → pip3 install edgartools
+
+  Website timeout
+  → Try different site or wait a few minutes
+
+  Google no results
+  → Wait 10-15 minutes between tests
+
+
+────────────────────────────────────────────────────────────────────
+Start here: python3 run_tests.py  (Interactive menu)
+Or read: TESTING_SUMMARY.md (Complete guide)
+────────────────────────────────────────────────────────────────────

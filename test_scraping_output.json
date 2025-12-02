@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "url": "https://shopify.com",
+    "domain": "shopify.com",
+    "logo_url": null,
+    "favicon_url": "https://shopify.com/favicon.ico",
+    "company_name": "Shopify",
+    "description": null,
+    "social_links": {},
+    "contact_info": {
+      "emails": [],
+      "phones": [],
+      "addresses": [],
+      "google_maps_links": []
+    },
+    "sitemap_urls": [
+      "https://shopify.com"
+    ],
+    "internal_links": [],
+    "key_pages": {},
+    "products": [],
+    "services": [],
+    "pdf_documents": [],
+    "json_ld_data": [],
+    "opengraph_data": {}
+  },
+  "founders": [],
+  "financials": {
+    "company_name": "Shopify",
+    "ticker": null,
+    "error": "Company not found or ticker could not be identified"
+  },
+  "funding": [],
+  "competitors": [],
+  "news": []
+}
