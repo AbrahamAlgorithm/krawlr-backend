@@ -1,0 +1,178 @@
+"""
+Standalone test script for PitchBook scraper.
+Tests company data extraction from PitchBook profiles.
+
+Usage:
+    python tests/test_pitchbook_standalone.py
+    python tests/test_pitchbook_standalone.py "Stripe"
+    python tests/test_pitchbook_standalone.py "OpenAI" "Anthropic" "Databricks"
+"""
+
+import asyncio
+import sys
+import json
+from pathlib import Path
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from app.services.scraping.pitchbook_scraper import (
+    get_company_data,
+    search_pitchbook_url,
+    scrape_pitchbook_profile
+)
+
+
+async def test_pitchbook_search(company_name: str):
+    """Test PitchBook URL search."""
+    print(f"\n{'='*70}")
+    print(f"🔍 TESTING PITCHBOOK URL SEARCH")
+    print(f"{'='*70}\n")
+    print(f"Company: {company_name}\n")
+    
+    url = await search_pitchbook_url(company_name)
+    
+    if url:
+        print(f"✅ PitchBook URL found: {url}\n")
+        return url
+    else:
+        print(f"❌ No PitchBook profile found\n")
+        return None
+
+
+async def test_pitchbook_scraper(company_name: str):
+    """Test PitchBook scraper with a specific company."""
+    print(f"\n{'='*70}")
+    print(f"🧪 TESTING PITCHBOOK SCRAPER FOR: {company_name}")
+    print(f"{'='*70}\n")
+    
+    # Get company data
+    print(f"📊 Fetching PitchBook data for {company_name}...\n")
+    result = await get_company_data(company_name)
+    
+    if not result or result.get('error'):
+        print(f"❌ {result.get('error', 'No data found')}\n")
+        if result.get('suggestion'):
+            print(f"💡 {result['suggestion']}\n")
+        return
+    
+    print(f"\n{'='*70}")
+    print(f"📈 RESULTS SUMMARY")
+    print(f"{'='*70}\n")
+    
+    # Basic company info
+    print(f"🏢 Company Information:")
+    print(f"   - Name: {result.get('company_name', 'N/A')}")
+    print(f"   - Website: {result.get('website', 'N/A')}")
+    print(f"   - PitchBook URL: {result.get('pitchbook_url', 'N/A')}")
+    
+    # Description
+    description = result.get('description')
+    if description:
+        print(f"\n📝 Description:")
+        print(f"   {description[:200]}{'...' if len(description) > 200 else ''}")
+    
+    # Company details
+    print(f"\n🏭 Company Details:")
+    print(f"   - Industry: {result.get('industry', 'N/A')}")
+    print(f"   - Headquarters: {result.get('headquarters', 'N/A')}")
+    print(f"   - Founded: {result.get('founded_year', 'N/A')}")
+    print(f"   - Employees: {result.get('employees', 'N/A')}")
+    print(f"   - Revenue: {result.get('revenue', 'N/A')}")
+    
+    # Funding information
+    total_funding = result.get('total_funding')
+    funding_rounds = result.get('funding_rounds', [])
+    
+    print(f"\n💰 Funding Information:")
+    print(f"   - Total Funding: {total_funding if total_funding else 'N/A'}")
+    print(f"   - Funding Rounds: {len(funding_rounds)}")
+    
+    if funding_rounds:
+        print(f"\n   Recent Funding Rounds:")
+        for i, round_data in enumerate(funding_rounds[:5], 1):
+            print(f"   {i}. {round_data.get('round_type', 'N/A')} - {round_data.get('date', 'N/A')}")
+            if round_data.get('amount'):
+                print(f"      Amount: {round_data['amount']}")
+            if round_data.get('investors'):
+                print(f"      Investors: {round_data['investors'][:100]}...")
+    
+    # Investors
+    investors = result.get('investors', [])
+    print(f"\n🤝 Investors: {len(investors)}")
+    if investors:
+        for i, investor in enumerate(investors[:10], 1):
+            print(f"   {i}. {investor}")
+        if len(investors) > 10:
+            print(f"   ... and {len(investors) - 10} more")
+    
+    # Executives and founders
+    executives = result.get('executives', [])
+    founders = result.get('founders', [])
+    
+    print(f"\n👥 Leadership:")
+    print(f"   - Founders: {len(founders)}")
+    if founders:
+        for founder in founders:
+            print(f"      • {founder}")
+    
+    print(f"   - Executives: {len(executives)}")
+    if executives:
+        for exec_data in executives[:5]:
+            name = exec_data.get('name', 'N/A')
+            title = exec_data.get('title', 'N/A')
+            print(f"      • {name} - {title}")
+        if len(executives) > 5:
+            print(f"      ... and {len(executives) - 5} more")
+    
+    # Save detailed output
+    safe_name = company_name.lower().replace(' ', '_')
+    output_file = f"pitchbook_output_{safe_name}.json"
+    with open(output_file, 'w') as f:
+        json.dump(result, f, indent=2, default=str)
+    
+    print(f"\n💾 Full data saved to: {output_file}")
+    print(f"\n{'='*70}")
+    print(f"✅ TEST COMPLETED FOR {company_name}")
+    print(f"{'='*70}\n")
+
+
+async def main():
+    """Main test function."""
+    print("\n" + "="*70)
+    print("🚀 PITCHBOOK SCRAPER - STANDALONE TEST")
+    print("="*70)
+    print("\n⚠️  Note: PitchBook may block scraping requests.")
+    print("   Results depend on PitchBook's anti-bot measures.")
+    
+    # Get company names from command line or use defaults
+    if len(sys.argv) > 1:
+        companies = sys.argv[1:]
+    else:
+        # Default test companies
+        companies = ['Stripe', 'OpenAI', 'Anthropic']
+        print(f"\nℹ️  No company names provided. Testing with defaults:")
+        for company in companies:
+            print(f"   - {company}")
+        print(f"\n   Usage: python tests/test_pitchbook_standalone.py \"Company Name\" ...")
+    
+    # Test each company
+    for company in companies:
+        try:
+            await test_pitchbook_scraper(company)
+            await asyncio.sleep(3)  # Rate limiting between companies
+        except KeyboardInterrupt:
+            print("\n\n⚠️  Test interrupted by user")
+            break
+        except Exception as e:
+            print(f"\n❌ Error testing {company}: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    print("\n" + "="*70)
+    print("✅ ALL TESTS COMPLETED")
+    print("="*70 + "\n")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

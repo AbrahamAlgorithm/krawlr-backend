@@ -16,6 +16,10 @@ class Settings:
             "EDGAR_IDENTITY", 
             "Krawlr scraper contact@krawlr.com"
         )
+        self.gemini_api_key = os.getenv(
+            "GEMINI_API_KEY",
+            ""
+        )
 
 @lru_cache()
 def get_settings() -> Settings:

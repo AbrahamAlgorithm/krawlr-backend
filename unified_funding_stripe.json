@@ -1,0 +1,335 @@
+{
+  "company_name": "Stripe",
+  "sources_used": [
+    "edgar",
+    "pitchbook"
+  ],
+  "data_quality": "excellent",
+  "identity": {
+    "name": "Stripe",
+    "ticker": "0P00011MOA.SW",
+    "website": "www.stripe.com",
+    "description": "Developer of an online financial infrastructure platform designed to accept payments, grow revenue, and accelerate new business opportunities. The company offers a developer-centric, API-driven payments platform that simplifies payment infrastructure complexity and provides a suite of ancillary commerce enablement and financial services products, enabling companies to accept payments, send payouts and manage their businesses online.",
+    "industry": "Financial Software",
+    "headquarters": "354 Oyster Point Boulevard, South San Francisco, CA 94080, United States",
+    "founded_year": "2010",
+    "status": "Private",
+    "employees": "8,550"
+  },
+  "financials": {
+    "revenue": null,
+    "net_income": null,
+    "assets": null,
+    "liabilities": null,
+    "equity": null,
+    "cash_flow": null,
+    "source": null,
+    "fiscal_year": null
+  },
+  "funding": {
+    "total_raised": "$2.23B",
+    "latest_deal_type": "2ndary - Private",
+    "funding_rounds": [
+      {
+        "deal_type": "26. Secondary Transaction - Private",
+        "date": "27-Feb-2025",
+        "amount": "",
+        "raised_to_date": "",
+        "post_val": null,
+        "status": "In Progress"
+      },
+      {
+        "deal_type": "25. Later Stage VC",
+        "date": "",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "24. Secondary Transaction - Private",
+        "date": "13-Sep-2024",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "23. Later Stage VC",
+        "date": "29-Apr-2024",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "22. Secondary Transaction - Private",
+        "date": "13-Apr-2024",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "21. Later Stage VC",
+        "date": "08-Jan-2024",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "20. Secondary Transaction - Private",
+        "date": "30-Apr-2023",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "19. Later Stage VC (Series I)",
+        "date": "15-Mar-2023",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "18. Secondary Transaction - Private",
+        "date": "02-Dec-2022",
+        "amount": "$1B",
+        "raised_to_date": "$2.23B",
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "17. Later Stage VC",
+        "date": "01-Aug-2022",
+        "amount": "",
+        "raised_to_date": "$2.23B",
+        "post_val": "",
+        "status": "Completed"
+      }
+    ],
+    "investors": [
+      "Arctic Ventures",
+      "Ascolta Ventures",
+      "HiJoJo Partners",
+      "Interplay Ventures"
+    ],
+    "source": "pitchbook"
+  },
+  "market": {
+    "competitors": [
+      {
+        "name": "EBANX",
+        "location": null,
+        "total_raised": null,
+        "website": null,
+        "description": "EBANX is a payment solution that connects global companies to consumers in Latin America. It offers a wide range of local payment methods to facilitate cross-border e-commerce.",
+        "advantages": null,
+        "focus_areas": [
+          "Latin America Payments",
+          "Cross-border E-commerce"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "HealPay",
+        "location": null,
+        "total_raised": null,
+        "website": null,
+        "description": "HealPay provides payment solutions for healthcare providers, focusing on patient billing and payment processing.",
+        "advantages": null,
+        "focus_areas": [
+          "Healthcare Payments",
+          "Patient Billing"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "2Checkout",
+        "location": null,
+        "total_raised": null,
+        "website": null,
+        "description": "2Checkout (now Verifone) is a global e-commerce platform that enables businesses to sell online to customers worldwide. It offers payment processing, fraud prevention, and compliance services.",
+        "advantages": null,
+        "focus_areas": [
+          "Global E-commerce",
+          "Payment Processing"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "Innoviti",
+        "location": null,
+        "total_raised": null,
+        "website": null,
+        "description": "Innoviti is a payment solutions provider that focuses on enabling seamless and intelligent payment experiences for merchants and consumers.",
+        "advantages": null,
+        "focus_areas": [
+          "Payment Solutions",
+          "Merchant Services"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "Mastercard OB Services Europe",
+        "location": null,
+        "total_raised": null,
+        "website": null,
+        "description": "Mastercard OB Services Europe likely refers to a division or service offering from Mastercard focused on payment processing and related services within Europe.",
+        "advantages": null,
+        "focus_areas": [
+          "Payment Processing",
+          "European Markets"
+        ],
+        "enriched": true
+      }
+    ],
+    "source": "pitchbook"
+  },
+  "latest_filings": {
+    "filings": [],
+    "source": null
+  },
+  "raw_data": {
+    "edgar": {
+      "ticker": "0P00011MOA.SW",
+      "name": "Entity -999999999",
+      "cik": "-999999999",
+      "sic": null,
+      "business_address": "",
+      "shares_outstanding": null,
+      "public_float": null,
+      "has_facts": false,
+      "income_statement_md": null,
+      "balance_sheet_md": null,
+      "cash_flow_md": null,
+      "key_metrics": {},
+      "latest_filings": [],
+      "ticker_resolution": {
+        "ticker": "0P00011MOA.SW",
+        "company_name": "Prosper Funds SICAV - Prosper Stars & Stripes Fund",
+        "exchange": "Swiss",
+        "method": "yahoo_finance"
+      }
+    },
+    "pitchbook": {
+      "company_name": "Stripe",
+      "description": "Developer of an online financial infrastructure platform designed to accept payments, grow revenue, and accelerate new business opportunities. The company offers a developer-centric, API-driven payments platform that simplifies payment infrastructure complexity and provides a suite of ancillary commerce enablement and financial services products, enabling companies to accept payments, send payouts and manage their businesses online.",
+      "website": "www.stripe.com",
+      "headquarters": "354 Oyster Point Boulevard, South San Francisco, CA 94080, United States",
+      "industry": "Financial Software",
+      "employees": "8,550",
+      "revenue": null,
+      "founded_year": "2010",
+      "status": "Private",
+      "latest_deal_type": "2ndary - Private",
+      "total_raised": "$2.23B",
+      "funding_rounds": [
+        {
+          "deal_type": "26. Secondary Transaction - Private",
+          "date": "27-Feb-2025",
+          "amount": "",
+          "raised_to_date": "",
+          "post_val": null,
+          "status": "In Progress"
+        },
+        {
+          "deal_type": "25. Later Stage VC",
+          "date": "",
+          "amount": "",
+          "raised_to_date": null,
+          "post_val": "",
+          "status": "Completed"
+        },
+        {
+          "deal_type": "24. Secondary Transaction - Private",
+          "date": "13-Sep-2024",
+          "amount": null,
+          "raised_to_date": null,
+          "post_val": null,
+          "status": "Completed"
+        },
+        {
+          "deal_type": "23. Later Stage VC",
+          "date": "29-Apr-2024",
+          "amount": "",
+          "raised_to_date": null,
+          "post_val": "",
+          "status": "Completed"
+        },
+        {
+          "deal_type": "22. Secondary Transaction - Private",
+          "date": "13-Apr-2024",
+          "amount": null,
+          "raised_to_date": null,
+          "post_val": null,
+          "status": "Completed"
+        },
+        {
+          "deal_type": "21. Later Stage VC",
+          "date": "08-Jan-2024",
+          "amount": "",
+          "raised_to_date": null,
+          "post_val": "",
+          "status": "Completed"
+        },
+        {
+          "deal_type": "20. Secondary Transaction - Private",
+          "date": "30-Apr-2023",
+          "amount": "",
+          "raised_to_date": null,
+          "post_val": "",
+          "status": "Completed"
+        },
+        {
+          "deal_type": "19. Later Stage VC (Series I)",
+          "date": "15-Mar-2023",
+          "amount": null,
+          "raised_to_date": null,
+          "post_val": null,
+          "status": "Completed"
+        },
+        {
+          "deal_type": "18. Secondary Transaction - Private",
+          "date": "02-Dec-2022",
+          "amount": "$1B",
+          "raised_to_date": "$2.23B",
+          "post_val": "",
+          "status": "Completed"
+        },
+        {
+          "deal_type": "17. Later Stage VC",
+          "date": "01-Aug-2022",
+          "amount": "",
+          "raised_to_date": "$2.23B",
+          "post_val": "",
+          "status": "Completed"
+        }
+      ],
+      "investors": [
+        "Arctic Ventures",
+        "Ascolta Ventures",
+        "HiJoJo Partners",
+        "Interplay Ventures"
+      ],
+      "competitors": [
+        "EBANX",
+        "HealPay",
+        "2Checkout",
+        "Innoviti",
+        "Mastercard OB Services Europe"
+      ],
+      "pitchbook_url": "https://pitchbook.com/profiles/company/54782-29"
+    }
+  },
+  "metadata": {
+    "scraped_at": "2025-12-03T01:25:35.608560",
+    "edgar_success": true,
+    "pitchbook_success": true,
+    "ai_enriched": true,
+    "errors": []
+  }
+}

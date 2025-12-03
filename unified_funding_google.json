@@ -1,0 +1,131 @@
+{
+  "company_name": "Google",
+  "sources_used": [
+    "edgar",
+    "pitchbook"
+  ],
+  "data_quality": "excellent",
+  "identity": {
+    "name": "Alphabet",
+    "ticker": "GOOG",
+    "website": "www.abc.xyz",
+    "description": "Alphabet is a holding company that wholly owns internet giant Google. The California-based company derives slightly less than 90% of its revenue from Google services, the vast majority of which is advertising sales. Alongside online ads, Google services houses sales stemming from Google's subscription services (YouTube TV and YouTube Music, among others), platforms (sales and in-app purchases on Play Store), and devices (Chromebooks, Pixel smartphones, and smart home products such as Chromecast). Google's cloud computing platform accounts for roughly 10% of Alphabet's revenue. The firm's investments in up-and-coming technologies such as self-driving cars (Waymo), health (Verily), and internet access (Google Fiber) make up the rest.",
+    "industry": "Holding Companies",
+    "headquarters": "1600 Amphitheatre Parkway, Mountain View, CA 94043, United States",
+    "founded_year": "1998",
+    "status": "Public",
+    "employees": "190,167"
+  },
+  "financials": {
+    "revenue": null,
+    "net_income": null,
+    "assets": null,
+    "liabilities": null,
+    "equity": null,
+    "cash_flow": null,
+    "source": null,
+    "fiscal_year": null
+  },
+  "funding": {
+    "total_raised": "$3.05T",
+    "latest_deal_type": null,
+    "funding_rounds": [
+      {
+        "deal_type": "$251.69",
+        "date": "$250.46",
+        "amount": "$140.53 - $257.33",
+        "raised_to_date": "$3.05T",
+        "post_val": "12.1B",
+        "status": "34.1M"
+      }
+    ],
+    "investors": [],
+    "source": "pitchbook"
+  },
+  "market": {
+    "competitors": [
+      {
+        "name": "Meta Platforms",
+        "location": "Menlo Park, CA, United States",
+        "total_raised": "$1.7B",
+        "website": "www.meta.com",
+        "description": "Meta Platforms, formerly Facebook, is a technology conglomerate focused on building social technologies. Its products include Facebook, Instagram, WhatsApp, and Oculus virtual reality products.",
+        "advantages": "Strong social network engagement and a dominant position in social media advertising.",
+        "focus_areas": [
+          "Social Media",
+          "Advertising",
+          "Virtual Reality"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "Apple",
+        "location": "Cupertino, CA, United States",
+        "total_raised": "$0",
+        "website": "www.apple.com",
+        "description": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories. It also sells related services.",
+        "advantages": "Strong brand loyalty, integrated hardware and software ecosystem, and a robust app store.",
+        "focus_areas": [
+          "Consumer Electronics",
+          "Software",
+          "Services"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "Microsoft",
+        "location": "Redmond, WA, United States",
+        "total_raised": "$0",
+        "website": "www.microsoft.com",
+        "description": "Microsoft Corporation is a technology company that develops, licenses, and supports a range of software products, services, and devices. Its offerings include Windows operating systems, Office productivity suite, Azure cloud services, and Xbox gaming.",
+        "advantages": "Dominance in enterprise software and cloud computing (Azure), strong position in operating systems.",
+        "focus_areas": [
+          "Cloud Computing",
+          "Software",
+          "Gaming"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "Yelp",
+        "location": "San Francisco, CA, United States",
+        "total_raised": "$170M",
+        "website": "www.yelp.com",
+        "description": "Yelp Inc. is an online platform that connects consumers with local businesses. It provides reviews and ratings for businesses such as restaurants, retail stores, and service providers.",
+        "advantages": "Niche focus on local business reviews and discovery.",
+        "focus_areas": [
+          "Local Search",
+          "Reviews",
+          "Business Listings"
+        ],
+        "enriched": true
+      },
+      {
+        "name": "Sony",
+        "location": "Tokyo, Japan",
+        "total_raised": "$0",
+        "website": "www.sony.com",
+        "description": "Sony Group Corporation is a multinational conglomerate corporation primarily known for its electronics, gaming, entertainment, and financial services. Its key businesses include PlayStation, imaging products, and entertainment content.",
+        "advantages": "Strong presence in gaming (PlayStation) and entertainment content, diverse product portfolio.",
+        "focus_areas": [
+          "Gaming",
+          "Electronics",
+          "Entertainment"
+        ],
+        "enriched": true
+      }
+    ],
+    "source": "pitchbook"
+  },
+  "latest_filings": {
+    "filings": [],
+    "source": null
+  },
+  "metadata": {
+    "scraped_at": "2025-12-03T01:33:50.239714",
+    "edgar_success": true,
+    "pitchbook_success": true,
+    "ai_enriched": true,
+    "errors": []
+  }
+}
