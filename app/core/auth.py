@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status, Header
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from firebase_admin import auth as firebase_auth
 import os
@@ -20,25 +20,21 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_current_user(authorization: str = Header(...)):
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """
     Dependency to extract and verify current user from Firebase ID token.
     Expects: Authorization: Bearer <id_token>
+    
+    This uses HTTPBearer for proper Swagger UI integration.
     """
     from app.core.database import db
     
-    # Validate Authorization header format
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Authorization header format. Expected: Bearer <token>"
-        )
-    
-    token = authorization.split(" ")[1]
+    token = credentials.credentials
     
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials"
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
     )
     
     try:

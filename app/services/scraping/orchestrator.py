@@ -1,6 +1,6 @@
 from app.services.scraping.website_scraper import website_scraper
 from app.services.scraping.google_search_scraper import google_search_scraper
-from app.services.scraping.edgar_scraper import sec_edgar_scraper
+from app.services.scraping.financial.edgar_scraper import sec_edgar_scraper
 from app.services.scraping.firestore_service import firestore_service
 from app.services.utils.validators import extract_domain
 from typing import Dict, Optional

@@ -21,7 +21,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from app.services.scraping.funding_scraper import get_unified_funding_data
+from app.services.scraping.financial.funding_scraper import get_unified_funding_data
 
 
 async def main():

@@ -5,10 +5,26 @@ from __future__ import annotations
 import logging
 from typing import Any
 import re
+import os
 
 try:
     from edgar import Company, set_identity
     print("[EDGAR] Successfully imported edgartools")
+    
+    # CRITICAL: Set identity IMMEDIATELY when module loads (SEC requirement)
+    # This must happen BEFORE any Company() calls
+    try:
+        from app.core.config import get_settings
+        settings = get_settings()
+        identity = settings.edgar_identity or "Krawlr scraper contact@krawlr.com"
+        print(f"[EDGAR] Setting identity from settings: {identity}")
+    except Exception as e:
+        identity = os.getenv("EDGAR_IDENTITY", "Krawlr scraper contact@krawlr.com")
+        print(f"[EDGAR] Setting identity from env: {identity}")
+    
+    set_identity(identity)
+    print(f"[EDGAR] ✓ Identity set globally: {identity}")
+    
 except ImportError as e:
     print(f"[EDGAR] Failed to import edgartools: {e}")
     Company = None
@@ -300,22 +316,8 @@ async def get_company_financials(ticker: str) -> dict | None:
         from edgar import Company, set_identity
         print("[EDGAR] ✓ Successfully imported edgartools")
         
-        # Try to get settings, fallback to environment variable
-        try:
-            from app.core.config import get_settings
-            settings = get_settings()
-            print(f"[EDGAR] EDGAR_IDENTITY from settings: {settings.edgar_identity}")
-            if settings.edgar_identity:
-                set_identity(settings.edgar_identity)
-                print(f"[EDGAR] ✓ Set identity: {settings.edgar_identity}")
-            else:
-                print("[EDGAR] ⚠️ WARNING: EDGAR_IDENTITY not set!")
-        except Exception as e:
-            print(f"[EDGAR] Could not load settings, using default identity: {e}")
-            import os
-            identity = os.getenv("EDGAR_IDENTITY", "Krawlr scraper contact@krawlr.com")
-            set_identity(identity)
-            print(f"[EDGAR] ✓ Set identity from env: {identity}")
+        # Identity is already set globally at module import
+        print(f"[EDGAR] ℹ️  Identity already set at module level")
         
         print(f"[EDGAR] Fetching comprehensive company data for ticker: {ticker}")
         company = Company(ticker)

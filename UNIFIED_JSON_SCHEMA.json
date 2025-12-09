@@ -1,0 +1,223 @@
+{
+  "company": {
+    "name": "Stripe",
+    "legal_name": "Stripe, Inc.",
+    "website": "https://stripe.com",
+    "domain": "stripe.com",
+    "description": "Stripe is a suite of APIs powering online payment processing and commerce solutions for internet businesses.",
+    "tagline": "Payments infrastructure for the internet",
+    "logo_url": "https://images.stripeassets.com/...",
+    "favicon_url": "https://images.stripeassets.com/...",
+    "founded_year": 2010,
+    "status": "Private",
+    "industry": "Financial Software",
+    "sector": "Financial Services",
+    "employee_count": 8550,
+    "headquarters": {
+      "address": "354 Oyster Point Boulevard",
+      "city": "South San Francisco",
+      "state": "CA",
+      "country": "United States",
+      "postal_code": "94080"
+    }
+  },
+
+  "financials": {
+    "public_company": false,
+    "ticker": null,
+    "exchange": null,
+    "cik": null,
+    "statements": null,
+    "valuation": {
+      "current": 50000000000,
+      "currency": "USD",
+      "date": "2023-03-14"
+    }
+  },
+
+  "funding": {
+    "total_raised_usd": 9500000000,
+    "currency": "USD",
+    "round_count": 10,
+    "latest_rounds": [
+      {
+        "type": "Secondary - Private",
+        "date": "2023-03-14",
+        "amount_usd": 6500000000,
+        "valuation_usd": 50000000000,
+        "lead_investors": ["Thrive Capital", "General Catalyst"]
+      }
+    ],
+    "investors": {
+      "total": 164,
+      "featured": [
+        {
+          "name": "Sequoia Capital",
+          "type": "Venture Capital",
+          "rounds": ["Series A", "Series B", "Series C"]
+        },
+        {
+          "name": "Andreessen Horowitz",
+          "type": "Venture Capital",
+          "rounds": ["Series B", "Series C"]
+        }
+      ]
+    }
+  },
+
+  "people": {
+    "founders": [
+      {
+        "name": "Patrick Collison",
+        "role": "Co-founder & CEO",
+        "bio": "Co-founded Stripe in 2010..."
+      },
+      {
+        "name": "John Collison",
+        "role": "Co-founder & President",
+        "bio": "Co-founded Stripe in 2010..."
+      }
+    ],
+    "executives": [
+      {
+        "name": "Patrick Collison",
+        "role": "CEO",
+        "department": "Executive",
+        "sources": ["website", "linkedin"]
+      },
+      {
+        "name": "John Collison",
+        "role": "President",
+        "department": "Executive",
+        "sources": ["website"]
+      },
+      {
+        "name": "Dhivya Suryadevara",
+        "role": "CFO",
+        "department": "Finance",
+        "sources": ["linkedin"]
+      }
+    ]
+  },
+
+  "products": [
+    {
+      "name": "Stripe Payments",
+      "category": "Payments",
+      "description": "Accept payments online and in person",
+      "url": "https://stripe.com/payments",
+      "features": ["Credit cards", "Digital wallets", "Bank transfers"],
+      "pricing": "2.9% + 30¢ per transaction",
+      "source": "website"
+    },
+    {
+      "name": "Stripe Terminal",
+      "category": "Payments",
+      "description": "In-person payments",
+      "url": "https://stripe.com/terminal",
+      "features": ["Card readers", "POS integration"],
+      "pricing": "Hardware + transaction fees",
+      "source": "website"
+    },
+    {
+      "name": "Stripe Connect",
+      "category": "Financial Infrastructure",
+      "description": "Payments for platforms and marketplaces",
+      "url": "https://stripe.com/connect",
+      "features": ["Multi-party payments", "Onboarding", "Payouts"],
+      "pricing": "Volume-based",
+      "source": "website"
+    }
+  ],
+
+  "competitors": [
+    {
+      "name": "Square",
+      "domain": "squareup.com",
+      "similarity_score": 95,
+      "description": "Payment processing and point-of-sale solutions",
+      "url": "https://squareup.com",
+      "founded_year": 2009,
+      "funding": 590000000,
+      "employee_count": 8000,
+      "status": "Private",
+      "relationship": "Direct competitor in SMB payment processing"
+    },
+    {
+      "name": "PayPal",
+      "domain": "paypal.com",
+      "similarity_score": 85,
+      "description": "Digital payments and money transfers",
+      "url": "https://paypal.com",
+      "founded_year": 1998,
+      "status": "Public",
+      "ticker": "PYPL",
+      "relationship": "Competitor in online payments"
+    },
+    {
+      "name": "Adyen",
+      "domain": "adyen.com",
+      "similarity_score": 90,
+      "description": "End-to-end payment platform",
+      "url": "https://adyen.com",
+      "founded_year": 2006,
+      "status": "Public",
+      "relationship": "Direct competitor in enterprise payments"
+    }
+  ],
+
+  "news": {
+    "total": 25,
+    "date_range": {
+      "oldest": "2025-11-01",
+      "newest": "2025-12-04"
+    },
+    "articles": [
+      {
+        "title": "Stripe to acquire billing platform Metronome",
+        "summary": "Stripe has agreed to acquire Metronome...",
+        "url": "https://www.fintechfutures.com/...",
+        "source": "FinTech Futures",
+        "published_date": "2025-12-04",
+        "sentiment": "positive",
+        "topics": ["acquisition", "billing", "product expansion"]
+      }
+    ]
+  },
+
+  "online_presence": {
+    "site_analysis": {
+      "sitemap_pages": 450,
+      "key_pages": {
+        "about": "https://stripe.com/about",
+        "careers": "https://stripe.com/jobs",
+        "contact": "https://stripe.com/contact",
+        "pricing": "https://stripe.com/pricing",
+        "blog": "https://stripe.com/blog",
+        "docs": "https://stripe.com/docs"
+      }
+    },
+    "social_media": {
+      "twitter": "https://twitter.com/stripe",
+      "linkedin": "https://linkedin.com/company/stripe",
+      "github": "https://github.com/stripe",
+      "youtube": "https://youtube.com/@stripe"
+    },
+    "contact_info": {
+      "emails": ["support@stripe.com", "press@stripe.com"],
+      "phones": ["+1-888-963-8955", "+1-415-635-7000"],
+      "addresses": [
+        "354 Oyster Point Boulevard, South San Francisco, CA 94080, USA",
+        "510 Townsend St, San Francisco, CA 94103, USA"
+      ]
+    }
+  },
+
+  "metadata": {
+    "scrape_id": "uuid-123-456",
+    "scrape_timestamp": "2025-12-05T10:30:00Z",
+    "scrape_duration_seconds": 45.3,
+    "data_quality_score": 95,
+    "refresh_recommended_date": "2025-12-12T10:30:00Z"
+  }
+}

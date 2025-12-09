@@ -17,8 +17,8 @@ from datetime import datetime
 
 import google.generativeai as genai
 
-from app.services.scraping.financial.edgar_scraper import get_company_financials_by_name
-from app.services.scraping.financial.pitchbook_scraper import get_company_data as get_pitchbook_data
+from .edgar_scraper import get_company_financials_by_name
+from .pitchbook_scraper import get_company_data as get_pitchbook_data
 from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)

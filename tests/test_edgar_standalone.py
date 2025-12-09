@@ -17,7 +17,7 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.services.scraping.edgar_scraper import (
+from app.services.scraping.financial.edgar_scraper import (
     get_company_financials,
     get_company_financials_by_name,
     resolve_company_ticker,

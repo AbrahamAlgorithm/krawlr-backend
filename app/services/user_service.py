@@ -1,7 +1,7 @@
 import os
 from app.core.database import db
 from firebase_admin import auth as firebase_auth
-from datetime import datetime
+from datetime import datetime, timezone
 import httpx
 import secrets
 
@@ -15,7 +15,6 @@ FIREBASE_WEB_API_KEY = os.getenv("FIREBASE_API_KEY")
 def create_user(name: str, email: str, password: str):
     """
     Register a new user using Firebase Admin SDK.
-    This is cleaner than using REST API for registration.
     """
     try:
         # Create user in Firebase Auth via Admin SDK
@@ -262,8 +261,10 @@ def reset_password_with_token(token: str, new_password: str):
     if reset_data.get("used"):
         raise ValueError("Reset token has already been used")
     
-    # Check if token is expired
-    if datetime.utcnow() > reset_data["expires_at"]:
+    # Check if token is expired (both must be timezone-aware for comparison)
+    expires_at = reset_data["expires_at"]
+    now = datetime.now(timezone.utc)
+    if now > expires_at:
         raise ValueError("Reset token has expired")
     
     # Get user
@@ -276,6 +277,16 @@ def reset_password_with_token(token: str, new_password: str):
     
     user_data = doc.to_dict()
     uid = user_data.get("uid")
+    
+    # If uid not in Firestore (legacy users), get it from Firebase Auth
+    if not uid:
+        try:
+            user = firebase_auth.get_user_by_email(email)
+            uid = user.uid
+            # Update Firestore with uid for future use
+            user_ref.update({"uid": uid})
+        except Exception as e:
+            raise ValueError(f"Failed to get user from Firebase: {str(e)}")
     
     # Update password in Firebase Auth
     try:

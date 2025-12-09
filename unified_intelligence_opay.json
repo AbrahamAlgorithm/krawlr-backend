@@ -1,0 +1,291 @@
+{
+  "company": {
+    "name": "Opay",
+    "legal_name": "OPay Digital Services Limited",
+    "website": "https://opay.com",
+    "domain": "opay.com",
+    "description": "OPay is a mobile-based platform for payment, transportation, food & grocery delivery, and other important services in your everyday life.",
+    "tagline": "Empowering your everyday life.",
+    "logo_url": "https://opay.com/logo.png",
+    "favicon_url": "https://opay.com/favicon.ico",
+    "founded_year": 2018,
+    "status": "Private company",
+    "industry": "Financial Services, Technology",
+    "sector": "Fintech",
+    "employee_count": 3000,
+    "headquarters": "Lagos, Nigeria"
+  },
+  "financials": {
+    "public_company": false,
+    "ticker": null,
+    "exchange": null,
+    "cik": "-999999999",
+    "statements": null,
+    "valuation": 2000000000
+  },
+  "funding": {
+    "total_raised_usd": 570000000,
+    "currency": "USD",
+    "round_count": 6,
+    "latest_rounds": [
+      {
+        "deal_type": "6. Later Stage VC (Series C)",
+        "date": "2021-08-23",
+        "amount": 400000000,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "5. Secondary Transaction - Private",
+        "date": "2021-07-10",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "4. Early Stage VC (Series B)",
+        "date": "2019-11-18",
+        "amount": 120000000,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "3. Early Stage VC (Series A)",
+        "date": "2019-07-10",
+        "amount": 50000000,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "2. Merger/Acquisition",
+        "date": "2018-05-24",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      }
+    ],
+    "investors": [
+      "Sequoia Capital China",
+      "SoftBank Ventures Asia",
+      "IDG Capital",
+      "Source Code Capital"
+    ]
+  },
+  "people": {
+    "founders": [
+      {
+        "name": "Zhou Yahui",
+        "role": "Founder",
+        "source": "wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Zhou_Yahui",
+        "description": "Founder of Opay",
+        "sources": [
+          "wikipedia"
+        ]
+      }
+    ],
+    "executives": [
+      {
+        "name": "James Perry",
+        "role": "Chief Financial Officer",
+        "source": "news",
+        "url": "https://finance.yahoo.com/news/opay-appoints-james-perry-chief-091000698.html",
+        "description": "Chief Financial Officer of Opay",
+        "sources": [
+          "finance.yahoo.com"
+        ]
+      }
+    ],
+    "board_members": [],
+    "key_people": []
+  },
+  "products": [
+    "OPay App",
+    "OKash",
+    "OWealth"
+  ],
+  "competitors": [
+    {
+      "name": "Paga",
+      "enriched": true
+    },
+    {
+      "name": "PalmPay",
+      "enriched": true
+    },
+    {
+      "name": "Flutterwave",
+      "enriched": true
+    },
+    {
+      "name": "Interswitch",
+      "enriched": true
+    },
+    {
+      "name": "Paystack",
+      "enriched": true
+    }
+  ],
+  "news": {
+    "total": 10,
+    "date_range": {
+      "oldest": "2025-10-09",
+      "newest": "2025-12-08"
+    },
+    "articles": [
+      {
+        "title": "OPay Appoints James Perry as Chief Financial OfficerYahoo FinanceSONGAPORE, Dec. 08, 2025 (GLOBE NEWSWIRE) -- OPay is pleased to share that James (\u001cJim\u001d) Perry has joined us as our Chief Financial Officer,...9 hours ago",
+        "url": "https://finance.yahoo.com/news/opay-appoints-james-perry-chief-091000698.html",
+        "description": "OPay Appoints James Perry as Chief Financial OfficerYahoo Finance",
+        "source": "finance.yahoo.com",
+        "published_date": "2025-12-08",
+        "date_string": "OPay Appoints James Perry as Chief Financial OfficerYahoo FinanceSONGAPORE, Dec. 08, 2025 (GLOBE NEWSWIRE) -- OPay is pleased to share that James (\u001cJim\u001d) Perry has joined us as our Chief Financial Officer,...9 hours ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "OPay Appoints Former Citigroup Managing Director James Perry as CFOGlobeNewswireSINGAPORE , Dec. 07, 2025 (GLOBE NEWSWIRE) -- OPay, a leader in emerging market digital banking headquartered in Singapore, has appointed...16 hours ago",
+        "url": "https://www.globenewswire.com/news-release/2025/12/08/3201168/0/en/OPay-Appoints-Former-Citigroup-Managing-Director-James-Perry-as-CFO.html",
+        "description": "OPay Appoints Former Citigroup Managing Director James Perry as CFOGlobeNewswire",
+        "source": "globenewswire.com",
+        "published_date": "2025-12-08",
+        "date_string": "OPay Appoints Former Citigroup Managing Director James Perry as CFOGlobeNewswireSINGAPORE , Dec. 07, 2025 (GLOBE NEWSWIRE) -- OPay, a leader in emerging market digital banking headquartered in Singapore, has appointed...16 hours ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "CAC to place Opay, Moniepoint on watchlist, report fintechs to CBNDaily Post NigeriaThe Corporate Affairs Commission, CAC, has warned that it may place leading fintech companies, including Opay and Moniepoint,...2 days ago",
+        "url": "https://dailypost.ng/2025/12/06/cac-to-place-opay-moniepoint-on-watchlist-report-fintechs-to-cbn/",
+        "description": "CAC to place Opay, Moniepoint on watchlist, report fintechs to CBNDaily Post Nigeria",
+        "source": "dailypost.ng",
+        "published_date": "2025-12-06",
+        "date_string": "CAC to place Opay, Moniepoint on watchlist, report fintechs to CBNDaily Post NigeriaThe Corporate Affairs Commission, CAC, has warned that it may place leading fintech companies, including Opay and Moniepoint,...2 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "OPay Clinches Two Top Laurels At Tech Innovation AwardsDaily TrustOPay, Nigeria's leading financial technology company, has once again distinguished itself by winning Fintech Company of the Year and Best...2 days ago",
+        "url": "https://dailytrust.com/opay-clinches-two-top-laurels-at-tech-innovation-awards/",
+        "description": "OPay Clinches Two Top Laurels At Tech Innovation AwardsDaily Trust",
+        "source": "dailytrust.com",
+        "published_date": "2025-12-06",
+        "date_string": "OPay Clinches Two Top Laurels At Tech Innovation AwardsDaily TrustOPay, Nigeria's leading financial technology company, has once again distinguished itself by winning Fintech Company of the Year and Best...2 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "OPay secures double honours at Tech Innovation awardsThe Nation NewspaperNigeria's premier financial technology company, OPay, has been named Fintech Company of the Year and Best Fintech in Cybersecurity at the...3 days ago",
+        "url": "https://thenationonlineng.net/opay-secures-double-honours-at-tech-innovation-awards/",
+        "description": "OPay secures double honours at Tech Innovation awardsThe Nation Newspaper",
+        "source": "thenationonlineng.net",
+        "published_date": "2025-12-05",
+        "date_string": "OPay secures double honours at Tech Innovation awardsThe Nation NewspaperNigeria's premier financial technology company, OPay, has been named Fintech Company of the Year and Best Fintech in Cybersecurity at the...3 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "OPay secures double honours at the Tech Innovation AwardsPremium Times NigeriaIn a major recognition of its innovation and security leadership, OPay, Nigeria's premier financial technology company, has been named...3 days ago",
+        "url": "https://www.premiumtimesng.com/promoted/840860-opay-secures-double-honours-at-the-tech-innovation-awards.html",
+        "description": "OPay secures double honours at the Tech Innovation AwardsPremium Times Nigeria",
+        "source": "premiumtimesng.com",
+        "published_date": "2025-12-05",
+        "date_string": "OPay secures double honours at the Tech Innovation AwardsPremium Times NigeriaIn a major recognition of its innovation and security leadership, OPay, Nigeria's premier financial technology company, has been named...3 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "'Hackers hit my account through OPAY, Moniepoint' \u0014 Oshiomhole calls for stricter fintech oversightTheCableAdams Oshiomhole, senator representing Edo north, says the national assembly must tighten oversight of financial institutions operating...3 days ago",
+        "url": "https://www.thecable.ng/hackers-hit-my-account-through-opay-moniepoint-oshiomhole-calls-for-stricter-fintech-oversight/",
+        "description": "'Hackers hit my account through OPAY, Moniepoint' \u0014 Oshiomhole calls for stricter fintech oversightTheCable",
+        "source": "thecable.ng",
+        "published_date": "2025-12-05",
+        "date_string": "'Hackers hit my account through OPAY, Moniepoint' \u0014 Oshiomhole calls for stricter fintech oversightTheCableAdams Oshiomhole, senator representing Edo north, says the national assembly must tighten oversight of financial institutions operating...3 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Senate moves to regulate Opay, Moniepoint, moneylenders, othersBusinessday NGThe Senate on Thursday began debate on a bill seeking to amend the Banks and Other Financial Institutions Act (BOFIA) 2020 to empower the...4 days ago",
+        "url": "https://businessday.ng/news/article/senate-moves-to-regulate-opay-moniepoint-moneylenders-others/",
+        "description": "AllNewsVideosImagesMapsBooksSearch toolsRecentRecentPast hourPast 24 hoursPast weekPast monthPast yearArchivesSorted by relevanceSorted by relevanceSorted by date",
+        "source": "businessday.ng",
+        "published_date": "2025-12-04",
+        "date_string": "Senate moves to regulate Opay, Moniepoint, moneylenders, othersBusinessday NGThe Senate on Thursday began debate on a bill seeking to amend the Banks and Other Financial Institutions Act (BOFIA) 2020 to empower the...4 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "OPay bags double awards for organisational excellencePunch NewspapersOPay wins two major awards for organisational excellence, highlighting its commitment to financial crime prevention, governance, risk,...1 week ago",
+        "url": "https://punchng.com/opay-bags-double-awards-for-organisational-excellence/",
+        "description": "OPay bags double awards for organisational excellencePunch Newspapers",
+        "source": "punchng.com",
+        "published_date": "2025-12-01",
+        "date_string": "OPay bags double awards for organisational excellencePunch NewspapersOPay wins two major awards for organisational excellence, highlighting its commitment to financial crime prevention, governance, risk,...1 week ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "CBN ends multi-bank agents with new rulesTechCabalFrom April 2026, CBN's new rule will stop POS agents from using Moniepoint, OPay, and PalmPay terminals together as agents must pick one.2 months ago",
+        "url": "https://techcabal.com/2025/10/07/cbn-bans-agents-owning-multiple-moniepoint-opay-palmpay-terminals/",
+        "description": "From April 2026, CBN's new rule will stop POS agents from using Moniepoint, OPay, and PalmPay terminals together as agents must pick one.2 months ago",
+        "source": "techcabal.com",
+        "published_date": "2025-10-09",
+        "date_string": "CBN ends multi-bank agents with new rulesTechCabalFrom April 2026, CBN's new rule will stop POS agents from using Moniepoint, OPay, and PalmPay terminals together as agents must pick one.2 months ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      }
+    ]
+  },
+  "online_presence": {
+    "site_analysis": {
+      "sitemap_pages": 0,
+      "key_pages": {}
+    },
+    "social_media": {
+      "twitter": "https://twitter.com/OPay_NG",
+      "linkedin": "https://www.linkedin.com/company/opay-digital-services-limited",
+      "facebook": "https://www.facebook.com/OPayDigital"
+    },
+    "contact_info": {
+      "emails": [
+        "support@opay.com"
+      ],
+      "phones": [
+        "+234 1 888 8329"
+      ],
+      "addresses": [
+        "Lagos, Nigeria"
+      ]
+    }
+  },
+  "metadata": {
+    "scrape_id": "33f6d9c7-b988-41af-8a6b-09d99c9f7365",
+    "scrape_timestamp": "2025-12-08T18:01:24.136748+00:00",
+    "scrape_duration_seconds": 95.27,
+    "data_quality_score": 72.0,
+    "ai_enriched": true,
+    "scrapers_status": {
+      "profile": "success",
+      "website": "success",
+      "financial": "success",
+      "news": "success",
+      "competitors": "success",
+      "leadership": "success"
+    },
+    "refresh_recommended_date": "2025-12-15T18:01:24.136748+00:00"
+  }
+}

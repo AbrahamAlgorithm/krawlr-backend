@@ -1,0 +1,133 @@
+{
+  "company": {
+    "name": "Google",
+    "legal_name": "Google LLC",
+    "website": "https://google.com",
+    "domain": "google.com",
+    "description": "Learn more about Google. Explore our innovative AI products...",
+    "tagline": "Organize the world's information and make it universally accessible and useful.",
+    "logo_url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+    "favicon_url": "https://google.com/favicon.ico",
+    "founded_year": 1998,
+    "status": "Subsidiary",
+    "industry": "Internet, Cloud Computing, Computer Software, Computer Hardware, Artificial Intelligence, Advertising",
+    "sector": "Technology",
+    "employee_count": 187000,
+    "headquarters": "Googleplex, Mountain View, California, U.S."
+  },
+  "financials": {
+    "public_company": true,
+    "ticker": "GOOG",
+    "exchange": "NASDAQ",
+    "cik": "1652044",
+    "statements": null,
+    "valuation": 1600000000000
+  },
+  "funding": {
+    "total_raised_usd": 36000000,
+    "currency": "USD",
+    "round_count": 1,
+    "latest_rounds": [],
+    "investors": [
+      "Kleiner Perkins",
+      "Sequoia Capital"
+    ]
+  },
+  "people": {
+    "founders": [
+      {
+        "name": "Larry Page",
+        "role": "Founder",
+        "source": "wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Larry_Page",
+        "description": "Founder of Google",
+        "sources": [
+          "wikipedia"
+        ]
+      },
+      {
+        "name": "Sergey Brin",
+        "role": "Founder",
+        "source": "wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Sergey_Brin",
+        "description": "Founder of Google",
+        "sources": [
+          "wikipedia"
+        ]
+      }
+    ],
+    "executives": [
+      {
+        "name": "Sundar Pichai",
+        "role": "CEO",
+        "source": "wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Sundar_Pichai",
+        "description": "CEO of Google and Alphabet",
+        "sources": [
+          "wikipedia"
+        ]
+      }
+    ],
+    "board_members": [],
+    "key_people": []
+  },
+  "products": [
+    "Google Search",
+    "YouTube",
+    "Android",
+    "Google Cloud",
+    "Google Maps"
+  ],
+  "competitors": [
+    "Microsoft",
+    "Apple",
+    "Amazon",
+    "Facebook",
+    "Baidu"
+  ],
+  "news": {
+    "total": 10,
+    "date_range": {
+      "oldest": "2025-04-12",
+      "newest": "2025-12-06"
+    },
+    "articles": []
+  },
+  "online_presence": {
+    "site_analysis": {
+      "sitemap_pages": 0,
+      "key_pages": {}
+    },
+    "social_media": {
+      "twitter": "@Google",
+      "linkedin": "https://www.linkedin.com/company/google",
+      "facebook": "https://www.facebook.com/Google"
+    },
+    "contact_info": {
+      "emails": [
+        "press@google.com"
+      ],
+      "phones": [
+        "+1-650-253-0000"
+      ],
+      "addresses": [
+        "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
+      ]
+    }
+  },
+  "metadata": {
+    "scrape_id": "test-123",
+    "scrape_timestamp": "2025-12-08T14:44:38.126498+00:00",
+    "scrape_duration_seconds": 138.09,
+    "data_quality_score": 45.5,
+    "scrapers_status": {
+      "profile": "success",
+      "website": "success",
+      "financial": "success",
+      "news": "success",
+      "competitors": "success",
+      "leadership": "success"
+    },
+    "refresh_recommended_date": "2025-12-15T14:44:38.126498+00:00"
+  }
+}

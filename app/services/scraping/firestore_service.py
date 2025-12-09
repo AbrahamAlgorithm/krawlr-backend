@@ -2,6 +2,7 @@ from app.core.database import db
 from datetime import datetime
 from typing import Dict, Optional, List
 import uuid
+from google.cloud import firestore
 
 class FirestoreService:
     """
@@ -13,9 +14,19 @@ class FirestoreService:
         self.jobs_collection = 'scraping_jobs'
         self.companies_collection = 'companies'
     
-    async def create_scraping_job(self, url: str, user_id: Optional[str] = None) -> str:
+    async def create_scraping_job(
+        self, 
+        url: str, 
+        user_id: Optional[str] = None,
+        company_name: Optional[str] = None
+    ) -> str:
         """
         Create a new scraping job.
+        
+        Args:
+            url: Website URL to scrape
+            user_id: User who initiated the scrape
+            company_name: Optional company name override
         
         Returns:
             job_id: Unique identifier for the job
@@ -23,10 +34,11 @@ class FirestoreService:
         job_id = str(uuid.uuid4())
         
         job_data = {
-            'job_id': job_id,
+            'scrape_id': job_id,
             'url': url,
             'user_id': user_id,
-            'status': 'pending',  # pending, in_progress, completed, failed
+            'company_name': company_name,
+            'status': 'pending',  # pending, processing, completed, failed
             'progress': 0,  # 0-100
             'created_at': datetime.utcnow(),
             'updated_at': datetime.utcnow(),
@@ -36,7 +48,7 @@ class FirestoreService:
         
         self.db.collection(self.jobs_collection).document(job_id).set(job_data)
         
-        print(f"✅ Created scraping job: {job_id}")
+        print(f"✅ Created scraping job: {job_id} for user: {user_id}")
         return job_id
     
     async def update_job_status(
@@ -81,7 +93,8 @@ class FirestoreService:
         })
         
         # Save to companies collection (keyed by domain)
-        domain = result.get('identity', {}).get('domain')
+        # Domain is in result['company']['domain'] in the unified schema
+        domain = result.get('company', {}).get('domain')
         if domain:
             company_ref = self.db.collection(self.companies_collection).document(domain)
             company_ref.set({
@@ -92,6 +105,8 @@ class FirestoreService:
             }, merge=True)
             
             print(f"💾 Saved company data for: {domain}")
+        else:
+            print(f"⚠️  No domain found in result - cannot cache company data")
         
         print(f"✅ Job completed: {job_id}")
     
@@ -133,6 +148,44 @@ class FirestoreService:
         time_diff = datetime.utcnow() - last_scraped
         return time_diff.total_seconds() < (hours * 3600)
     
+    async def get_cached_company_data(self, domain: str, max_age_days: int = 7) -> Optional[Dict]:
+        """
+        Get cached company data if it exists and is fresh enough.
+        
+        Args:
+            domain: Company domain (e.g., 'stripe.com')
+            max_age_days: Maximum age of cached data in days (default: 7)
+            
+        Returns:
+            Company intelligence data if cached and fresh, None otherwise
+        """
+        company_ref = self.db.collection(self.companies_collection).document(domain)
+        company_doc = company_ref.get()
+        
+        if not company_doc.exists:
+            return None
+        
+        data = company_doc.to_dict()
+        last_scraped = data.get('last_scraped')
+        
+        if not last_scraped:
+            return None
+        
+        # Check if cache is still fresh
+        time_diff = datetime.utcnow() - last_scraped
+        max_age_seconds = max_age_days * 24 * 3600
+        
+        if time_diff.total_seconds() > max_age_seconds:
+            print(f"⏰ Cache expired for {domain} (age: {time_diff.days} days)")
+            return None
+        
+        company_data = data.get('data')
+        if company_data:
+            print(f"✅ Cache HIT for {domain} (age: {time_diff.days} days, {time_diff.seconds // 3600} hours)")
+            return company_data
+        
+        return None
+    
     async def get_user_jobs(self, user_id: str, limit: int = 50) -> List[Dict]:
         """Get all scraping jobs for a user."""
         jobs_ref = (
@@ -152,6 +205,41 @@ class FirestoreService:
             jobs.append(job_data)
         
         return jobs
+    
+    async def get_user_scrapes(self, user_id: str, limit: int = 20) -> List[Dict]:
+        """Get user's scraping history with formatted data."""
+        jobs = await self.get_user_jobs(user_id, limit)
+        
+        # Format for API response
+        formatted = []
+        for job in jobs:
+            formatted.append({
+                'scrape_id': job.get('scrape_id', job.get('job_id')),
+                'user_id': job.get('user_id'),
+                'status': job.get('status'),
+                'progress': job.get('progress', 0),
+                'url': job.get('url'),
+                'company_name': job.get('company_name'),
+                'created_at': job.get('created_at'),
+                'updated_at': job.get('updated_at'),
+                'completed_at': job.get('completed_at'),
+                'error': job.get('error'),
+                'data_quality_score': job.get('result', {}).get('metadata', {}).get('data_quality_score') if job.get('has_result') else None
+            })
+        
+        return formatted
+    
+    async def health_check(self) -> bool:
+        """Check if Firestore connection is healthy."""
+        try:
+            # Try to read a document (creates it if doesn't exist)
+            self.db.collection('_health_check').document('ping').set({
+                'timestamp': datetime.utcnow()
+            })
+            return True
+        except Exception as e:
+            print(f"❌ Firestore health check failed: {e}")
+            return False
 
 # Create singleton instance
 firestore_service = FirestoreService()

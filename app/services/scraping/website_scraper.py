@@ -313,3 +313,18 @@ class WebsiteScraper:
 
 # Create a shared instance
 website_scraper = WebsiteScraper()
+
+
+# Convenience wrapper function for easy imports
+async def scrape_website(url: str, max_pages: int = 200) -> Dict:
+    """
+    Scrape a website for comprehensive company information
+    
+    Args:
+        url: Website URL to scrape
+        max_pages: Maximum pages to crawl (default: 200)
+        
+    Returns:
+        Dictionary with website data
+    """
+    return await website_scraper.scrape(url, max_pages)

@@ -20,6 +20,10 @@ class Settings:
             "GEMINI_API_KEY",
             ""
         )
+        self.openai_api_key = os.getenv(
+            "OPENAI_API_KEY",
+            ""
+        )
 
 @lru_cache()
 def get_settings() -> Settings:

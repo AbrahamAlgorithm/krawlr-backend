@@ -16,7 +16,7 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.services.scraping.pitchbook_scraper import (
+from app.services.scraping.financial.pitchbook_scraper import (
     get_company_data,
     search_pitchbook_url,
     scrape_pitchbook_profile

@@ -1,0 +1,325 @@
+{
+  "company": {
+    "name": "Stripe",
+    "legal_name": "Stripe, Inc.",
+    "website": "https://stripe.com",
+    "domain": "stripe.com",
+    "description": "Stripe is a suite of APIs powering online payment processing and commerce solutions for internet businesses of all sizes. Accept payments and scale faster with AI.",
+    "tagline": "Payments infrastructure for the internet.",
+    "logo_url": "https://images.stripeassets.com/fzn2n1nzq965/1hgcBNd12BfT9VLgbId7By/01d91920114b124fb4cf6d448f9f06eb/favicon.svg",
+    "favicon_url": "https://images.stripeassets.com/fzn2n1nzq965/1hgcBNd12BfT9VLgbId7By/01d91920114b124fb4cf6d448f9f06eb/favicon.svg",
+    "founded_year": 2010,
+    "status": "Private",
+    "industry": "Financial services, Payment processor",
+    "sector": "Fintech",
+    "employee_count": 8500,
+    "headquarters": "South San Francisco, California, U.S. and Dublin, Ireland"
+  },
+  "financials": {
+    "public_company": false,
+    "ticker": null,
+    "exchange": null,
+    "cik": "-999999999",
+    "statements": null,
+    "valuation": 95000000000
+  },
+  "funding": {
+    "total_raised_usd": 2230000000.0,
+    "currency": "USD",
+    "round_count": 10,
+    "latest_rounds": [
+      {
+        "deal_type": "26. Secondary Transaction - Private",
+        "date": "2025-02-27",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "In Progress"
+      },
+      {
+        "deal_type": "25. Later Stage VC",
+        "date": null,
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "24. Secondary Transaction - Private",
+        "date": "2024-09-13",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "23. Later Stage VC",
+        "date": "2024-04-29",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "22. Secondary Transaction - Private",
+        "date": "2024-04-13",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      }
+    ],
+    "investors": [
+      "Arctic Ventures",
+      "Ascolta Ventures",
+      "HiJoJo Partners",
+      "Interplay Ventures",
+      "Sequoia Capital",
+      "Andreessen Horowitz",
+      "Tiger Global Management"
+    ]
+  },
+  "people": {
+    "founders": [
+      {
+        "name": "Patrick Collison",
+        "role": "CEO"
+      },
+      {
+        "name": "John Collison",
+        "role": "President"
+      }
+    ],
+    "executives": [
+      {
+        "name": "Dhivya Suryadevara",
+        "role": "CFO"
+      }
+    ],
+    "board_members": [],
+    "key_people": []
+  },
+  "products": [
+    "Stripe Payments",
+    "Stripe Connect",
+    "Stripe Atlas",
+    "Stripe Radar",
+    "Stripe Terminal"
+  ],
+  "competitors": [
+    {
+      "name": "Adyen",
+      "location": "Amsterdam, Netherlands",
+      "total_raised": null,
+      "website": "https://www.adyen.com",
+      "description": "Adyen is a global payment company offering businesses an end-to-end infrastructure delivering frictionless payments across online, mobile, and in-store channels.",
+      "advantages": null,
+      "focus_areas": [],
+      "enriched": true
+    },
+    {
+      "name": "PayPal",
+      "location": "San Jose, California, U.S.",
+      "total_raised": null,
+      "website": "https://www.paypal.com",
+      "description": "PayPal is a global online payment system that supports online money transfers and serves as an electronic alternative to traditional paper methods like checks and money orders.",
+      "advantages": null,
+      "focus_areas": [],
+      "enriched": true
+    },
+    {
+      "name": "Square",
+      "location": "San Francisco, California, U.S.",
+      "total_raised": null,
+      "website": "https://squareup.com",
+      "description": "Square provides payment and point-of-sale solutions for businesses of all sizes, enabling them to accept card payments and manage their business operations.",
+      "advantages": null,
+      "focus_areas": [],
+      "enriched": true
+    },
+    {
+      "name": "Matchmove",
+      "location": null,
+      "total_raised": null,
+      "website": null,
+      "description": "Matchmove is a payment technology company that provides a platform for digital payments and financial services.",
+      "advantages": null,
+      "focus_areas": [],
+      "enriched": true
+    },
+    {
+      "name": "EBANX",
+      "location": null,
+      "total_raised": null,
+      "website": null,
+      "description": "EBANX is a payment processing company focused on enabling global businesses to accept payments from emerging markets, particularly in Latin America.",
+      "advantages": null,
+      "focus_areas": [],
+      "enriched": true
+    }
+  ],
+  "news": {
+    "total": 10,
+    "date_range": {
+      "oldest": "2025-10-09",
+      "newest": "2025-12-08"
+    },
+    "articles": [
+      {
+        "title": "Stripe, Adyen rival Airwallex nabs $330M at $8B valuationTech Funding NewsAirwallex raises $330 million in its Series G round at an $8 billion valuation, establishes a dual global headquarters in San Francisco,...8 hours ago",
+        "url": "https://techfundingnews.com/airwallex-raises-330m-series-g-8b-valuation-san-francisco-expansion/",
+        "description": "AllNewsVideosImagesMapsBooksSearch toolsRecentRecentPast hourPast 24 hoursPast weekPast monthPast yearArchivesSorted by relevanceSorted by relevanceSorted by date",
+        "source": "PYMNTS.com",
+        "published_date": "2025-12-08",
+        "date_string": "Stripe, Adyen rival Airwallex nabs $330M at $8B valuationTech Funding NewsAirwallex raises $330 million in its Series G round at an $8 billion valuation, establishes a dual global headquarters in San Francisco,...8 hours ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Stripe opens new headquarters in DublinFX News GroupStripe opens new headquarters in Dublin ... Today, programmable financial services company Stripe opened its new Dublin headquarters, tripling its...1 month ago",
+        "url": "https://fxnewsgroup.com/forex-news/payments/stripe-opens-new-headquarters-in-dublin/",
+        "description": "Stripe opens new headquarters in DublinFX News Group",
+        "source": "fxnewsgroup.com",
+        "published_date": "2025-12-08",
+        "date_string": "Stripe opens new headquarters in DublinFX News GroupStripe opens new headquarters in Dublin ... Today, programmable financial services company Stripe opened its new Dublin headquarters, tripling its...1 month ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Stripe Acquires Metronome to Enhance Usage-Based Pricing for AIPYMNTS.comStripe signed a definitive agreement to acquire Metronome, a usage-based billing platform for software companies.2 days ago",
+        "url": "https://www.pymnts.com/acquisitions/2025/stripe-acquires-metronome-to-enhance-metered-pricing-capabilities-for-ai-companies/",
+        "description": "Stripe Acquires Metronome to Enhance Usage-Based Pricing for AIPYMNTS.com",
+        "source": "PYMNTS.com",
+        "published_date": "2025-12-06",
+        "date_string": "Stripe Acquires Metronome to Enhance Usage-Based Pricing for AIPYMNTS.comStripe signed a definitive agreement to acquire Metronome, a usage-based billing platform for software companies.2 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Stripe to buy MetronomePayments DiveThe digital payments player has agreed to purchase U.S. billing platform Metronome, bringing together software firms that operate in the...4 days ago",
+        "url": "https://www.paymentsdive.com/news/stripe-to-buy-metronome/807055/",
+        "description": "The digital payments player has agreed to purchase U.S. billing platform Metronome, bringing together software firms that operate in the...4 days ago",
+        "source": "paymentsdive.com",
+        "published_date": "2025-12-04",
+        "date_string": "Stripe to buy MetronomePayments DiveThe digital payments player has agreed to purchase U.S. billing platform Metronome, bringing together software firms that operate in the...4 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Paystack integrates with Xero via Stripe to Transform Payments for South African BusinessesIT News AfricaPaystack, a leading African payment gateway, has announced a new integration through Stripe with Xero, the global small business platform,...5 days ago",
+        "url": "https://www.itnewsafrica.com/2025/12/paystack-integrates-with-xero-via-stripe-to-transform-payments-for-south-african-businesses/",
+        "description": "Paystack integrates with Xero via Stripe to Transform Payments for South African BusinessesIT News Africa",
+        "source": "itnewsafrica.com",
+        "published_date": "2025-12-03",
+        "date_string": "Paystack integrates with Xero via Stripe to Transform Payments for South African BusinessesIT News AfricaPaystack, a leading African payment gateway, has announced a new integration through Stripe with Xero, the global small business platform,...5 days ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Sui Partners With Stripe\u2019s Bridge to Launch Interoperable Stablecoin USDsuiBitgetSui Partners With Stripe's Bridge to Launch Interoperable Stablecoin USDsui ... On November 12, the Sui Foundation announced the launch of USDsui,...3 weeks ago",
+        "url": "https://www.bitget.com/news/detail/12560605061373",
+        "description": "Sui Partners With Stripe\u2019s Bridge to Launch Interoperable Stablecoin USDsuiBitget",
+        "source": "bitget.com",
+        "published_date": "2025-11-17",
+        "date_string": "Sui Partners With Stripe\u2019s Bridge to Launch Interoperable Stablecoin USDsuiBitgetSui Partners With Stripe's Bridge to Launch Interoperable Stablecoin USDsui ... On November 12, the Sui Foundation announced the launch of USDsui,...3 weeks ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Payments Giant Stripe Nabs 10th in Top 100 FinTech CompaniesFinTech MagazineThe payments infrastructure provider processes US$1.4tn annually whilst expanding into stablecoins and AI-powered financial services.1 month ago",
+        "url": "https://fintechmagazine.com/news/payments-giant-stripe-nabs-10th-in-top-100-fintech-companies",
+        "description": "Payments Giant Stripe Nabs 10th in Top 100 FinTech CompaniesFinTech Magazine",
+        "source": "fintechmagazine.com",
+        "published_date": "2025-11-08",
+        "date_string": "Payments Giant Stripe Nabs 10th in Top 100 FinTech CompaniesFinTech MagazineThe payments infrastructure provider processes US$1.4tn annually whilst expanding into stablecoins and AI-powered financial services.1 month ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "JPMorgan says Stripe\u2019s \u2018twin revolutions\u2019 in AI and money movement could unlock a $350 billion marketThe BlockRecent acquisitions and the launch of the Tempo L1 mark Stripe's return to crypto infrastructure as AI-driven commerce gains traction.1 month ago",
+        "url": "https://www.theblock.co/post/376005/jpmorgan-stripe-ai-money-movement-unlock-billion-market",
+        "description": "JPMorgan says Stripe\u2019s \u2018twin revolutions\u2019 in AI and money movement could unlock a $350 billion marketThe Block",
+        "source": "theblock.co",
+        "published_date": "2025-11-08",
+        "date_string": "JPMorgan says Stripe\u2019s \u2018twin revolutions\u2019 in AI and money movement could unlock a $350 billion marketThe BlockRecent acquisitions and the launch of the Tempo L1 mark Stripe's return to crypto infrastructure as AI-driven commerce gains traction.1 month ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Stripe Enables Custom Stablecoin Launch for BusinessesCoinMarketCapBridge, which Stripe acquired for $1.1 billion in 2024, provides the underlying infrastructure for the service.2 months ago",
+        "url": "https://coinmarketcap.com/academy/article/stripe-enables-custom-stablecoin-launch-for-businesses",
+        "description": "Stripe Enables Custom Stablecoin Launch for BusinessesCoinMarketCap",
+        "source": "coinmarketcap.com",
+        "published_date": "2025-10-09",
+        "date_string": "Stripe Enables Custom Stablecoin Launch for BusinessesCoinMarketCapBridge, which Stripe acquired for $1.1 billion in 2024, provides the underlying infrastructure for the service.2 months ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      },
+      {
+        "title": "Stripe Eyes Selfany as Nigerian-Rooted Startup Gets Pre-Approved for Capital FinancingPunch NewspapersNigerian startup Selfany secures funding from Stripe, sparking acquisition rumors. Is this Stripe's entry into Africa's creator economy?2 months ago",
+        "url": "https://punchng.com/stripe-eyes-selfany-as-nigerian-rooted-startup-gets-pre-approved-for-capital-financing/",
+        "description": "Stripe Eyes Selfany as Nigerian-Rooted Startup Gets Pre-Approved for Capital FinancingPunch Newspapers",
+        "source": "punchng.com",
+        "published_date": "2025-10-09",
+        "date_string": "Stripe Eyes Selfany as Nigerian-Rooted Startup Gets Pre-Approved for Capital FinancingPunch NewspapersNigerian startup Selfany secures funding from Stripe, sparking acquisition rumors. Is this Stripe's entry into Africa's creator economy?2 months ago",
+        "credibility_score": 6,
+        "article_type": "news",
+        "mentions_company": true
+      }
+    ]
+  },
+  "online_presence": {
+    "site_analysis": {
+      "sitemap_pages": 0,
+      "key_pages": {
+        "products": "https://stripe.com/legal/payment-initiation-services",
+        "team": "https://stripe.com/legal/peoples-trust-acquirer-terms",
+        "about": "https://stripe.com/atlas",
+        "contact": "https://stripe.com/contact/sales",
+        "careers": "https://stripe.com/jobs"
+      }
+    },
+    "social_media": {
+      "twitter": "https://twitter.com/stripe",
+      "linkedin": "https://www.linkedin.com/company/stripe",
+      "facebook": "https://www.facebook.com/Stripe"
+    },
+    "contact_info": {
+      "emails": [
+        "support@stripe.com"
+      ],
+      "phones": [
+        "+1-888-963-8955"
+      ],
+      "addresses": [
+        "354 Oyster Point Blvd, South San Francisco, CA 94080, USA",
+        "1 Grand Canal Street Lower, Dublin 2, Ireland"
+      ]
+    }
+  },
+  "metadata": {
+    "scrape_id": "344b7ebe-2224-4231-b23c-5c6b1ed558a5",
+    "scrape_timestamp": "2025-12-08T17:56:58.503759+00:00",
+    "scrape_duration_seconds": 98.99,
+    "data_quality_score": 75.0,
+    "ai_enriched": true,
+    "scrapers_status": {
+      "profile": "success",
+      "website": "success",
+      "financial": "success",
+      "news": "success",
+      "competitors": "success",
+      "leadership": "success"
+    },
+    "refresh_recommended_date": "2025-12-15T17:56:58.503759+00:00"
+  }
+}
