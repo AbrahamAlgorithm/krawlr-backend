@@ -1,0 +1,145 @@
+{
+  "company_name": "Discord",
+  "identity": {
+    "name": "Discord",
+    "ticker": null,
+    "website": "www.discord.com",
+    "description": "Developer of a group communication platform designed to facilitate real-time voice, video, and text interactions for communities and friends. The company's platform includes customizable chat spaces, support for voice channels, video streaming, file sharing, moderation tools, and integration with third-party applications, enabling online communities, gaming groups, and social circles to connect, collaborate, and engage in shared activities within a secure and flexible digital environment.",
+    "industry": "Communication Software",
+    "headquarters": "444 De Haro Street, Suite 200, San Francisco, CA 94107, United States",
+    "founded_year": "2012",
+    "status": "IPO Registration",
+    "employees": "1,000"
+  },
+  "financials": {
+    "revenue": null,
+    "net_income": null,
+    "assets": null,
+    "liabilities": null,
+    "equity": null,
+    "cash_flow": null,
+    "fiscal_year": null,
+    "income_statement": [],
+    "balance_sheet": [],
+    "cash_flow_statement": []
+  },
+  "funding": {
+    "total_raised": "$1.1B",
+    "latest_deal_type": "Later Stage VC",
+    "funding_rounds": [
+      {
+        "deal_type": "17. Later Stage VC",
+        "date": "25-Jun-2025",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "16. IPO",
+        "date": "27-Mar-2025",
+        "amount": "",
+        "raised_to_date": "",
+        "post_val": "",
+        "status": "Announced"
+      },
+      {
+        "deal_type": "15. Secondary Transaction - Private",
+        "date": "07-Nov-2024",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "14. Later Stage VC",
+        "date": "01-Mar-2024",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "13. Mezzanine",
+        "date": "20-Sep-2023",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "12. Later Stage VC",
+        "date": "01-Mar-2022",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "11. Secondary Transaction - Private",
+        "date": "01-Feb-2022",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "10. Secondary Transaction - Private",
+        "date": "17-Dec-2021",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "9. Later Stage VC (Series I)",
+        "date": "15-Sep-2021",
+        "amount": "$500M",
+        "raised_to_date": "$1.1B",
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "8. Later Stage VC (Series H)",
+        "date": "17-Dec-2020",
+        "amount": "$100M",
+        "raised_to_date": "$598M",
+        "post_val": null,
+        "status": "Completed"
+      }
+    ],
+    "investors": [
+      "Cosmic Venture Partners",
+      "HighGear Ventures",
+      "Next Round Capital Partners"
+    ]
+  },
+  "key_metrics": {
+    "shares_outstanding": null,
+    "public_float": null
+  },
+  "latest_filings": [],
+  "insiders": [],
+  "competitors": [
+    {
+      "name": "Telegram Messenger"
+    },
+    {
+      "name": "Element"
+    },
+    {
+      "name": "Bigo Technology"
+    },
+    {
+      "name": "TeamSpeak Holdings"
+    },
+    {
+      "name": "Guilded"
+    }
+  ],
+  "_internal": {
+    "data_source": "pitchbook",
+    "is_public": false,
+    "needs_ai_enrichment": true
+  }
+}

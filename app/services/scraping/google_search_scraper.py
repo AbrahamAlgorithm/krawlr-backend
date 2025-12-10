@@ -4,6 +4,8 @@ from typing import List, Dict, Optional
 import re
 from urllib.parse import quote_plus, urljoin
 import asyncio
+import os
+import httpx
 
 class GoogleSearchScraper:
     """
@@ -13,6 +15,7 @@ class GoogleSearchScraper:
     
     def __init__(self):
         self.base_url = "https://www.google.com/search"
+        self.brave_api_key = os.getenv("BRAVE_SEARCH_API_KEY")
         # User agent to avoid being blocked
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -113,31 +116,83 @@ class GoogleSearchScraper:
     async def _search(self, query: str, limit: int = 10, search_type: Optional[str] = None) -> List[Dict[str, str]]:
         """
         Perform a Google search and extract results.
+        Falls back to Brave Search API if Google scraping fails.
         
         Args:
             query: Search query
             limit: Maximum number of results
             search_type: Optional search type ('nws' for news)
         """
-        encoded_query = quote_plus(query)
-        url = f"{self.base_url}?q={encoded_query}&num={limit}"
-        
-        if search_type:
-            url += f"&tbm={search_type}"
-        
+        # Try Google first
         try:
+            encoded_query = quote_plus(query)
+            url = f"{self.base_url}?q={encoded_query}&num={limit}"
+            
+            if search_type:
+                url += f"&tbm={search_type}"
+            
             # Add delay to avoid rate limiting
             await asyncio.sleep(1)
             
             response = await http_client.get(url, headers=self.headers)
-            if not response:
-                print(f"  ❌ Failed to fetch search results")
-                return []
+            if response:
+                results = self._parse_search_results(response.text)
+                if results:
+                    print(f"  ✅ Google search returned {len(results)} results")
+                    return results
             
-            return self._parse_search_results(response.text)
+            print(f"  ⚠️  Google search failed or returned no results, trying Brave API...")
         
         except Exception as e:
-            print(f"  ❌ Error searching: {str(e)}")
+            print(f"  ⚠️  Google search error: {str(e)}, trying Brave API...")
+        
+        # Fallback to Brave Search API
+        return await self._search_brave(query, limit)
+    
+    async def _search_brave(self, query: str, limit: int = 10) -> List[Dict[str, str]]:
+        """
+        Fallback search using Brave Search API.
+        
+        Args:
+            query: Search query
+            limit: Maximum number of results
+        """
+        if not self.brave_api_key:
+            print(f"  ❌ Brave API key not found, cannot fallback")
+            return []
+        
+        try:
+            url = "https://api.search.brave.com/res/v1/web/search"
+            headers = {
+                "Accept": "application/json",
+                "X-Subscription-Token": self.brave_api_key
+            }
+            params = {
+                "q": query,
+                "count": min(limit, 20)  # Brave max is 20
+            }
+            
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(url, headers=headers, params=params)
+                response.raise_for_status()
+                
+                data = response.json()
+                results = []
+                
+                # Parse Brave API response
+                for item in data.get("web", {}).get("results", []):
+                    results.append({
+                        'title': item.get('title', ''),
+                        'url': item.get('url', ''),
+                        'description': item.get('description', ''),
+                        'source': ''
+                    })
+                
+                print(f"  ✅ Brave API returned {len(results)} results")
+                return results
+        
+        except Exception as e:
+            print(f"  ❌ Brave API error: {str(e)}")
             return []
     
     def _parse_search_results(self, html: str) -> List[Dict[str, str]]:

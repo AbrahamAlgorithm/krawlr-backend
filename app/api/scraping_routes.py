@@ -1,9 +1,10 @@
 """
-Scraping API endpoints
+Scraping API endpoints with Pub/Sub job queue
 """
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, status
 from typing import Dict, Any, Optional
 from datetime import datetime
+import logging
 
 from app.core.auth import get_current_user
 from app.schemas.scraping import (
@@ -16,33 +17,41 @@ from app.schemas.scraping import (
 )
 from app.services.scraping.unified_orchestrator import UnifiedOrchestrator
 from app.services.scraping.firestore_service import firestore_service
+from app.services.pubsub import get_job_queue
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1", tags=["Scraping"])
 
-# Initialize orchestrator
+# Initialize services
 orchestrator = UnifiedOrchestrator()
+job_queue = get_job_queue()
 
 
 @router.post("/scrape/company", response_model=ScrapeResponse, status_code=status.HTTP_202_ACCEPTED)
 async def scrape_company(
     request: ScrapeRequest,
-    background_tasks: BackgroundTasks,
     current_user: Dict = Depends(get_current_user)
 ):
     """
-    Start a comprehensive company intelligence scraping job.
+    Start a comprehensive company intelligence scraping job via Pub/Sub queue.
     
-    This endpoint initiates an asynchronous scraping process that:
-    - Scrapes company profile (Wikipedia, Crunchbase, etc.)
-    - Analyzes website content and structure
-    - Extracts financial data (SEC EDGAR for public companies)
-    - Gathers funding information
-    - Identifies competitors
-    - Finds founders and leadership
-    - Collects recent news mentions
-    - **Enriches and cleans data with AI**
+    **🚀 HIGH-PERFORMANCE ASYNC PROCESSING**
+    - Returns instantly (< 1 second) with job_id
+    - Job queued in Google Cloud Pub/Sub for processing
+    - Worker processes scrape in background (60-120 seconds)
+    - Poll GET /scrape/status/{job_id} for progress
+    - Webhook notification when complete (if configured)
     
-    The job runs in the background. Use the returned `scrape_id` to check progress.
+    **Data Sources:**
+    - Company profile (Wikipedia, Crunchbase, etc.)
+    - Website content and structure analysis
+    - Financial data (SEC EDGAR for public companies)
+    - Funding and investor information (PitchBook)
+    - Competitor identification
+    - Founders and leadership team
+    - Recent news mentions
+    - **AI-powered data enrichment and cleaning**
     
     **Authentication Required**: Bearer token or API key
     
@@ -50,6 +59,8 @@ async def scrape_company(
     - Free tier: 10 scrapes/day
     - Pro tier: 100 scrapes/day
     - Enterprise: Unlimited
+    
+    **Caching**: Results cached for 7 days (instant return if available)
     """
     user_id = current_user.get('uid') or current_user.get('id')
     
@@ -70,38 +81,50 @@ async def scrape_company(
         
         if cached_data:
             # Return cached data immediately - no need to scrape again!
-            return ScrapeResponse(
-                scrape_id=cached_data['metadata']['scrape_id'],
-                status="completed",
-                url=request.url,
-                company_name=cached_data['company'].get('name'),
-                message=f"✅ Returning cached data from {cached_data['metadata'].get('scrape_timestamp', 'recent')} scrape. Fresh data available instantly!",
-                estimated_completion_seconds=0
-            )
+            try:
+                # Handle different data structures (new vs old cached data)
+                company_name = None
+                scrape_id = None
+                scrape_timestamp = None
+                
+                if 'metadata' in cached_data:
+                    scrape_id = cached_data['metadata'].get('scrape_id')
+                    scrape_timestamp = cached_data['metadata'].get('scrape_timestamp', 'recent')
+                
+                if 'company' in cached_data:
+                    company_name = cached_data['company'].get('name')
+                elif 'company_name' in cached_data:
+                    company_name = cached_data.get('company_name')
+                
+                return ScrapeResponse(
+                    scrape_id=scrape_id or 'cached',
+                    status="completed",
+                    url=request.url,
+                    company_name=company_name or request.company_name,
+                    message=f"✅ Returning cached data from {scrape_timestamp} scrape. Fresh data available instantly!",
+                    estimated_completion_seconds=0
+                )
+            except Exception as e:
+                # If cached data is malformed, ignore it and re-scrape
+                logger.warning(f"Cached data for {domain} is malformed: {e}. Re-scraping...")
         
-        # Not in cache - create new scraping job
-        scrape_id = await firestore_service.create_scraping_job(
-            url=request.url,
+        # Not in cache - enqueue new scraping job via Pub/Sub
+        job_result = await job_queue.enqueue_scrape_job(
+            domain=domain,
             user_id=user_id,
-            company_name=request.company_name
-        )
-        
-        # Start background scraping task
-        background_tasks.add_task(
-            run_scraping_job,
-            scrape_id=scrape_id,
             url=request.url,
             company_name=request.company_name,
-            user_id=user_id
+            priority="high" if current_user.get("tier") == "enterprise" else "normal",
+            webhook_url=current_user.get("webhook_url")  # Optional webhook for completion
         )
         
         return ScrapeResponse(
-            scrape_id=scrape_id,
-            status="pending",
+            scrape_id=job_result['job_id'],
+            status="queued",
             url=request.url,
             company_name=request.company_name,
-            message="Scraping job started successfully. Check status at GET /api/v1/scrape/{scrape_id}",
-            estimated_completion_seconds=120
+            message=f"🚀 Scraping job queued successfully! Job ID: {job_result['job_id']}. Check status at GET /api/v1/scrape/status/{job_result['job_id']}",
+            estimated_completion_seconds=90
         )
         
     except ValueError as e:
@@ -112,7 +135,7 @@ async def scrape_company(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to start scraping job: {str(e)}"
+            detail=f"Failed to enqueue scraping job: {str(e)}"
         )
 
 
@@ -122,20 +145,23 @@ async def get_scrape_status(
     current_user: Dict = Depends(get_current_user)
 ):
     """
-    Get the current status of a scraping job.
+    Get the current status of a scraping job from Pub/Sub queue.
     
     **Status values**:
-    - `pending`: Job is queued, not started yet
-    - `processing`: Currently scraping (check progress field)
-    - `completed`: Scraping finished successfully
-    - `failed`: Scraping encountered an error
+    - `queued`: Job is in Pub/Sub queue, waiting for worker
+    - `processing`: Worker is currently scraping (check progress_percent field)
+    - `completed`: Scraping finished successfully (result available)
+    - `failed`: Scraping encountered an error (check error field)
+    - `retrying`: Job failed but will retry
+    
+    **Real-time progress**: progress_percent (0-100) and current_stage fields updated live
     
     **Authentication Required**: Must be the owner of the scrape job
     """
     user_id = current_user.get('uid') or current_user.get('id')
     
     try:
-        job_data = await firestore_service.get_job_status(scrape_id)
+        job_data = job_queue.get_job_status(scrape_id)
         
         if not job_data:
             raise HTTPException(
@@ -150,7 +176,20 @@ async def get_scrape_status(
                 detail="You don't have permission to access this scraping job"
             )
         
-        return ScrapeJobStatus(**job_data)
+        # Map job_queue fields to ScrapeJobStatus schema
+        return ScrapeJobStatus(
+            scrape_id=job_data.get('job_id', scrape_id),
+            user_id=job_data['user_id'],
+            status=job_data['status'],
+            progress=job_data.get('progress_percent', 0),
+            url=job_data.get('url', ''),
+            company_name=job_data.get('company_name'),
+            created_at=job_data['created_at'],
+            updated_at=job_data.get('updated_at', job_data['created_at']),
+            completed_at=job_data.get('completed_at'),
+            error=job_data.get('error'),
+            data_quality_score=job_data.get('data_quality_score')
+        )
         
     except HTTPException:
         raise

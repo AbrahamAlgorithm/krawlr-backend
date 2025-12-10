@@ -24,6 +24,28 @@ class Settings:
             "OPENAI_API_KEY",
             ""
         )
+        self.openai_model = os.getenv(
+            "OPENAI_MODEL",
+            "gpt-4o-mini"
+        )
+        
+        # Pub/Sub Configuration
+        self.gcp_project_id = os.getenv(
+            "GCP_PROJECT_ID",
+            ""
+        )
+        self.pubsub_scrape_jobs_topic = os.getenv(
+            "PUBSUB_SCRAPE_JOBS_TOPIC",
+            "scrape-jobs"
+        )
+        self.pubsub_scrape_completed_topic = os.getenv(
+            "PUBSUB_SCRAPE_COMPLETED_TOPIC",
+            "scrape-completed"
+        )
+        self.pubsub_scrape_progress_topic = os.getenv(
+            "PUBSUB_SCRAPE_PROGRESS_TOPIC",
+            "scrape-progress"
+        )
 
 @lru_cache()
 def get_settings() -> Settings:

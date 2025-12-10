@@ -1,0 +1,174 @@
+{
+  "company_name": "Lovable",
+  "identity": {
+    "name": "Lovable",
+    "ticker": null,
+    "website": "www.lovable.dev",
+    "description": "Developer of an AI-powered software development platform intended to create software without coding. The company's platform facilitates developers to describe their ideas in natural language, which are then transformed into fully functional applications with aesthetically pleasing designs, enabling builders and developers without technical expertise to build and deploy software efficiently.",
+    "industry": "Software Development Applications",
+    "headquarters": "1111B South Governors Avenue, Dover, DE 19904, United States",
+    "founded_year": "2023",
+    "status": "Private",
+    "employees": "60"
+  },
+  "financials": {
+    "revenue": null,
+    "net_income": null,
+    "assets": null,
+    "liabilities": null,
+    "equity": null,
+    "cash_flow": null,
+    "fiscal_year": null,
+    "income_statement": [],
+    "balance_sheet": [],
+    "cash_flow_statement": []
+  },
+  "funding": {
+    "total_raised": "$222M",
+    "latest_deal_type": "Early Stage VC",
+    "funding_rounds": [
+      {
+        "deal_type": "6. Early Stage VC",
+        "date": "",
+        "amount": "",
+        "raised_to_date": "",
+        "post_val": null,
+        "status": "Upcoming"
+      },
+      {
+        "deal_type": "5. Early Stage VC (Series A)",
+        "date": "17-Jul-2025",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "4. Early Stage VC",
+        "date": "13-Feb-2025",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "3. Seed Round",
+        "date": "07-Jun-2024",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "2. Early Stage VC",
+        "date": "02-Nov-2023",
+        "amount": "",
+        "raised_to_date": "",
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "1. Accelerator/Incubator",
+        "date": "",
+        "amount": "",
+        "raised_to_date": "",
+        "post_val": "",
+        "status": "Completed"
+      }
+    ],
+    "investors": [
+      "Accel",
+      "AIX Ventures",
+      "Evantic Capital",
+      "Greens Ventures"
+    ]
+  },
+  "key_metrics": {
+    "shares_outstanding": null,
+    "public_float": null
+  },
+  "latest_filings": [],
+  "insiders": [],
+  "products": [
+    {
+      "name": "AI Code Generator",
+      "category": "Software Development Tool",
+      "description": "An AI-driven tool that converts natural language descriptions into code, allowing users to create applications without needing to write code manually."
+    },
+    {
+      "name": "Visual Application Builder",
+      "category": "Development Platform",
+      "description": "A drag-and-drop interface that enables users to design and customize applications visually, making it accessible for non-technical users."
+    },
+    {
+      "name": "Collaboration Suite",
+      "category": "Team Collaboration Tool",
+      "description": "A suite of tools that facilitates real-time collaboration among team members during the software development process, enhancing productivity and communication."
+    },
+    {
+      "name": "Deployment Automation",
+      "category": "DevOps Tool",
+      "description": "A feature that automates the deployment of applications to various environments, streamlining the release process and reducing manual errors."
+    },
+    {
+      "name": "User Feedback Integration",
+      "category": "User Experience Tool",
+      "description": "A tool that allows users to gather and integrate feedback from end-users directly into the development process, ensuring that applications meet user needs."
+    }
+  ],
+  "competitors": [
+    {
+      "name": "Bubble",
+      "location": "New York, NY, USA",
+      "website": "https://bubble.io",
+      "description": "Bubble is a no-code platform that allows users to build fully functional web applications without coding. It provides a visual interface for designing applications and managing databases.",
+      "advantages": "Bubble has a more established user base and extensive community resources, offering a wider range of templates and plugins.",
+      "focus_areas": [
+        "No-code development",
+        "Community support",
+        "Template marketplace"
+      ]
+    },
+    {
+      "name": "Adalo",
+      "location": "San Francisco, CA, USA",
+      "website": "https://www.adalo.com",
+      "description": "Adalo is a no-code platform that enables users to create mobile and web applications with a focus on user experience and design.",
+      "advantages": "Adalo offers a strong emphasis on mobile app development and user-friendly design tools, making it appealing for mobile-first projects.",
+      "focus_areas": [
+        "Mobile app development",
+        "User interface design",
+        "Integration capabilities"
+      ]
+    },
+    {
+      "name": "OutSystems",
+      "location": "Atlanta, GA, USA",
+      "website": "https://www.outsystems.com",
+      "description": "OutSystems is a low-code application development platform that accelerates the development of applications with a focus on enterprise solutions.",
+      "advantages": "OutSystems provides robust enterprise features and scalability, making it suitable for larger organizations with complex needs.",
+      "focus_areas": [
+        "Enterprise solutions",
+        "Scalability",
+        "Integration with existing systems"
+      ]
+    },
+    {
+      "name": "AppGyver",
+      "location": "Berlin, Germany",
+      "website": "https://www.appgyver.com",
+      "description": "AppGyver is a no-code platform that allows users to build applications for web and mobile without any coding experience, focusing on rapid prototyping.",
+      "advantages": "AppGyver offers a free tier for users, making it accessible for startups and individual developers looking to prototype quickly.",
+      "focus_areas": [
+        "Rapid prototyping",
+        "Accessibility",
+        "Cross-platform development"
+      ]
+    }
+  ],
+  "_internal": {
+    "data_source": "pitchbook",
+    "is_public": false,
+    "needs_ai_enrichment": true
+  }
+}

@@ -14,34 +14,59 @@ FIREBASE_WEB_API_KEY = os.getenv("FIREBASE_API_KEY")
 
 def create_user(name: str, email: str, password: str):
     """
-    Register a new user using Firebase Admin SDK.
+    Register a new user using Firebase Auth REST API.
+    This ensures password is properly set for sign-in.
     """
+    if not FIREBASE_WEB_API_KEY:
+        raise Exception("FIREBASE_API_KEY not configured in environment")
+    
     try:
-        # Create user in Firebase Auth via Admin SDK
-        firebase_user = firebase_auth.create_user(
-            email=email,
-            password=password,
-            display_name=name
-        )
-        
-        # Store additional user data in Firestore
+        # First check if user already exists in Firestore
         user_ref = db.collection(USER_COLLECTION).document(email)
+        if user_ref.get().exists:
+            raise ValueError("User already exists")
+        
+        # Create user via Firebase Auth REST API (same as sign-in uses)
+        request_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={FIREBASE_WEB_API_KEY}"
+        
+        payload = {
+            "email": email,
+            "password": password,
+            "returnSecureToken": True
+        }
+        
+        import requests
+        response = requests.post(request_url, json=payload)
+        
+        if response.status_code != 200:
+            error_data = response.json()
+            error_message = error_data.get("error", {}).get("message", "Unknown error")
+            
+            if "EMAIL_EXISTS" in error_message:
+                raise ValueError("User already exists")
+            else:
+                raise Exception(f"Failed to create user: {error_message}")
+        
+        data = response.json()
+        uid = data.get("localId")
+        
+        # Store user data in Firestore (Admin SDK update not needed)
         user_ref.set({
-            "uid": firebase_user.uid,
+            "uid": uid,
             "name": name,
             "email": email,
             "created_at": datetime.utcnow()
         })
         
         return {
-            "uid": firebase_user.uid,
+            "uid": uid,
             "id": email,
             "name": name,
             "email": email
         }
         
-    except firebase_auth.EmailAlreadyExistsError:
-        raise ValueError("User already exists")
+    except ValueError:
+        raise
     except Exception as e:
         raise Exception(f"Failed to create user: {str(e)}")
 

@@ -1,158 +1,181 @@
 """
-Sitemap discovery and parsing utilities.
+Website crawling and sitemap discovery service.
+
+Complete sitemap discovery implementation with async HTTP, proper error handling,
+and hierarchical URL tree building.
 """
+
+from __future__ import annotations
 
 from typing import List, Set, Optional
 from urllib.parse import urljoin, urlparse
 import xml.etree.ElementTree as ET
 from collections import deque
 import logging
+import asyncio
 
 from app.services.utils.http_client import http_client
 
 logger = logging.getLogger(__name__)
 
-SITEMAP_CANDIDATES = (
-    "/sitemap.xml",
-    "/sitemap_index.xml",
-    "/sitemap/sitemap.xml",
-    "/sitemap1.xml",
-    "/wp-sitemap.xml",
-)
+# Common sitemap locations to check
+COMMON_SITEMAP_PATHS = [
+    '/sitemap.xml',
+    '/sitemap_index.xml',
+    '/sitemap/sitemap.xml',
+    '/sitemap1.xml',
+    '/wp-sitemap.xml'
+]
+
+# Concurrency limit for sitemap fetching
+SITEMAP_CONCURRENCY = asyncio.Semaphore(5)
 
 
-async def discover_sitemaps(base_url: str, max_sitemaps: int = 5) -> List[str]:
-    """Discover sitemap URLs from common locations and robots.txt."""
-    print(f"  🔍 Discovering sitemaps for {base_url}...")
+async def fetch_sitemap(url: str, timeout: float = 10.0) -> List[str]:
+    """
+    Fetch and parse an XML sitemap, returning list of URLs.
     
-    discovered: List[str] = []
-    seen: Set[str] = set()
+    Handles both:
+    - Standard sitemaps with <url><loc>...</loc></url>
+    - Sitemap index files with <sitemap><loc>...</loc></sitemap>
     
-    async def _try_add(url: str) -> bool:
-        """Try to add a URL as a valid sitemap."""
-        if url in seen:
-            return False
+    Args:
+        url: Sitemap URL to fetch
+        timeout: Request timeout in seconds
         
-        seen.add(url)
+    Returns:
+        List of discovered URLs
         
-        text = await http_client.get_text(url)
-        if not text:
-            logger.debug(f"Sitemap candidate unavailable: {url}")
-            return False
-        
+    Implementation Details:
+        - Fetches raw XML via async HTTP GET
+        - Parses with xml.etree.ElementTree
+        - Extracts <loc> tags (URL locations)
+        - Handles XML namespaces (xmlns)
+        - Recursively follows sitemap index references
+    """
+    async with SITEMAP_CONCURRENCY:
         try:
-            root = ET.fromstring(text)
-        except ET.ParseError:
-            logger.debug(f"Candidate is not valid XML: {url}")
-            return False
-        
-        tag = root.tag.lower()
-        if tag.endswith("urlset") or tag.endswith("sitemapindex"):
-            discovered.append(url)
-            print(f"    ✅ Found sitemap: {url}")
-            return True
-        else:
-            logger.debug(f"XML file but not a sitemap: {url} (tag: {tag})")
-            return False
-    
-    # Step 1: Try common sitemap locations
-    for path in SITEMAP_CANDIDATES:
-        if len(discovered) >= max_sitemaps:
-            break
-        sitemap_url = urljoin(base_url, path)
-        await _try_add(sitemap_url)
-    
-    # Step 2: Check robots.txt
-    robots_url = urljoin(base_url, "/robots.txt")
-    robots_text = await http_client.get_text(robots_url)
-    
-    if robots_text:
-        print(f"    📄 Checking robots.txt for sitemap directives...")
-        for line in robots_text.splitlines():
-            if len(discovered) >= max_sitemaps:
-                break
-            if line.lower().startswith("sitemap:"):
-                sitemap_url = line.split(":", 1)[1].strip()
-                await _try_add(sitemap_url)
-    
-    print(f"  ✅ Discovered {len(discovered)} sitemap(s)")
-    return discovered
-
-
-def _extract_text(element: ET.Element, tag_name: str) -> Optional[str]:
-    """Extract text from an XML element's child by tag name."""
-    for child in element:
-        if child.tag.lower().endswith(tag_name.lower()):
-            return (child.text or "").strip()
-    return None
-
-
-async def parse_sitemap_urls(
-    sitemap_url: str,
-    base_netloc: str,
-    visited: Set[str],
-    max_urls: int = 500,
-    max_sitemaps: int = 10
-) -> Set[str]:
-    """Parse a sitemap and extract all URLs, recursively handling sitemap indexes."""
-    urls: Set[str] = set()
-    sitemap_queue: deque[str] = deque([sitemap_url])
-    
-    while sitemap_queue and len(urls) < max_urls and len(visited) < max_sitemaps:
-        current_sitemap = sitemap_queue.popleft()
-        
-        if current_sitemap in visited:
-            continue
-        
-        visited.add(current_sitemap)
-        print(f"    📖 Parsing sitemap: {current_sitemap}")
-        
-        xml_text = await http_client.get_text(current_sitemap)
-        if not xml_text:
-            logger.warning(f"Unable to fetch sitemap: {current_sitemap}")
-            continue
-        
-        try:
-            root = ET.fromstring(xml_text)
+            logger.info(f"Fetching sitemap: {url}")
+            
+            # Async HTTP GET with timeout
+            response = await http_client.get(url, timeout=timeout)
+            if not response or response.status_code != 200:
+                logger.warning(f"Failed to fetch sitemap {url}: status {response.status_code if response else 'None'}")
+                return []
+            
+            content = response.content
+            
+            # Parse XML
+            root = ET.fromstring(content)
+            
+            # Handle XML namespaces (sitemap xmlns)
+            # Namespace format: {http://www.sitemaps.org/schemas/sitemap/0.9}
+            ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+            
+            urls = []
+            
+            # Check if this is a sitemap index (contains <sitemap> tags)
+            sitemap_refs = root.findall('.//sm:sitemap/sm:loc', ns)
+            if sitemap_refs:
+                logger.info(f"Found sitemap index with {len(sitemap_refs)} sitemaps")
+                # Recursively fetch each referenced sitemap
+                tasks = []
+                for loc in sitemap_refs:
+                    sitemap_url = loc.text.strip() if loc.text else None
+                    if sitemap_url:
+                        logger.info(f"Following sitemap reference: {sitemap_url}")
+                        tasks.append(fetch_sitemap(sitemap_url, timeout))
+                
+                # Fetch all sitemaps concurrently
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                for result in results:
+                    if isinstance(result, list):
+                        urls.extend(result)
+            else:
+                # Standard sitemap: extract <url><loc> tags
+                url_locs = root.findall('.//sm:url/sm:loc', ns)
+                urls = [loc.text.strip() for loc in url_locs if loc.text]
+                logger.info(f"Extracted {len(urls)} URLs from sitemap")
+            
+            return urls
+            
         except ET.ParseError as e:
-            logger.warning(f"Invalid sitemap XML at {current_sitemap}: {e}")
-            continue
-        
-        tag = root.tag.lower()
-        
-        if tag.endswith("sitemapindex"):
-            print(f"      ℹ️  This is a sitemap index (contains other sitemaps)")
-            for sitemap_element in root:
-                loc = _extract_text(sitemap_element, "loc")
-                if not loc:
-                    continue
-                parsed = urlparse(loc)
-                if not parsed.netloc:
-                    loc = urljoin(current_sitemap, loc)
-                    parsed = urlparse(loc)
-                if parsed.netloc and parsed.netloc == base_netloc:
-                    sitemap_queue.append(loc)
-        
-        elif tag.endswith("urlset"):
-            print(f"      ℹ️  This is a URL set (contains page URLs)")
-            for url_element in root:
-                loc = _extract_text(url_element, "loc")
-                if not loc:
-                    continue
-                parsed = urlparse(loc)
-                if not parsed.netloc:
-                    loc = urljoin(current_sitemap, loc)
-                    parsed = urlparse(loc)
-                if parsed.netloc != base_netloc:
-                    continue
-                urls.add(loc.rstrip("/"))
-                if len(urls) >= max_urls:
-                    print(f"      ⚠️  Reached URL cap of {max_urls}")
-                    break
-        else:
-            logger.debug(f"Unexpected sitemap root tag: {tag}")
+            logger.warning(f"Failed to parse sitemap XML {url}: {e}")
+            return []
+        except Exception as e:
+            logger.error(f"Unexpected error fetching sitemap {url}: {e}")
+            return []
+
+
+async def discover_sitemaps(base_url: str, timeout: float = 10.0) -> List[str]:
+    """
+    Discover sitemap URLs for a domain by checking common locations and robots.txt.
     
-    return urls
+    Discovery order:
+    1. Try /sitemap.xml
+    2. Try /sitemap_index.xml
+    3. Parse /robots.txt for Sitemap: directives
+    
+    Args:
+        base_url: Base URL of website (e.g., https://example.com)
+        timeout: Request timeout
+        
+    Returns:
+        List of discovered sitemap URLs
+        
+    Example robots.txt parsing:
+        User-agent: *
+        Disallow: /admin
+        Sitemap: https://example.com/sitemap.xml
+        Sitemap: https://example.com/news-sitemap.xml
+    """
+    discovered = []
+    parsed = urlparse(base_url)
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    
+    logger.info(f"Discovering sitemaps for: {base}")
+    
+    # 1. Check common sitemap paths concurrently
+    async def check_sitemap(path: str) -> Optional[str]:
+        sitemap_url = urljoin(base, path)
+        try:
+            response = await http_client.head(sitemap_url, timeout=timeout)
+            if response and response.status_code == 200:
+                logger.info(f"✓ Found sitemap: {sitemap_url}")
+                return sitemap_url
+        except Exception:
+            pass  # Silently skip failed attempts
+        return None
+    
+    # Check all common paths concurrently
+    tasks = [check_sitemap(path) for path in COMMON_SITEMAP_PATHS]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    for result in results:
+        if isinstance(result, str):
+            discovered.append(result)
+    
+    # 2. Check robots.txt for Sitemap directives
+    robots_url = urljoin(base, '/robots.txt')
+    try:
+        logger.info(f"Checking robots.txt: {robots_url}")
+        response = await http_client.get(robots_url, timeout=timeout)
+        if response and response.status_code == 200:
+            robots_text = response.text if hasattr(response, 'text') else response.content.decode('utf-8', errors='ignore')
+            # Parse each line
+            for line in robots_text.splitlines():
+                line = line.strip()
+                # Look for: Sitemap: https://example.com/sitemap.xml
+                if line.lower().startswith('sitemap:'):
+                    sitemap_url = line.split(':', 1)[1].strip()
+                    if sitemap_url not in discovered:
+                        logger.info(f"✓ Found sitemap in robots.txt: {sitemap_url}")
+                        discovered.append(sitemap_url)
+    except Exception as e:
+        logger.warning(f"Could not fetch robots.txt: {e}")
+    
+    logger.info(f"Discovered {len(discovered)} sitemap(s)")
+    return discovered
 
 
 async def build_sitemap_from_navigation(base_url: str, max_urls: int = 100) -> List[str]:
@@ -255,45 +278,81 @@ async def get_all_sitemap_urls(
     max_sitemaps: int = 10
 ) -> List[str]:
     """
-    High-level function: Discover and parse all sitemaps for a website.
+    Main entry point: Discover sitemaps, extract URLs, with fallback to navigation crawling.
     
-    NEW: Falls back to building sitemap from navigation if no official sitemap exists.
+    Full workflow:
+    1. Normalize base_url
+    2. Discover sitemap URLs (check /sitemap.xml, robots.txt, etc.)
+    3. Fetch and parse each sitemap XML (with recursive sitemap index support)
+    4. Deduplicate and limit URLs
+    5. Fallback to navigation crawling if no sitemaps found
+    
+    Args:
+        base_url: Target website URL
+        max_urls: Maximum URLs to return (prevents memory issues)
+        max_sitemaps: Maximum number of sitemaps to discover (default: 10)
+        
+    Returns:
+        List of discovered URLs
+    
+    Example usage:
+        urls = await get_all_sitemap_urls("https://stripe.com", max_urls=200)
+        print(f"Found {len(urls)} URLs")
     """
-    parsed_base = urlparse(base_url)
-    if not parsed_base.scheme or not parsed_base.netloc:
-        raise ValueError("Base URL must include scheme and host (e.g., https://example.com)")
+    logger.info(f"Starting sitemap crawl for: {base_url}")
     
-    base_netloc = parsed_base.netloc
+    # Normalize base URL (ensure scheme)
+    parsed = urlparse(base_url)
+    if not parsed.scheme:
+        base_url = f"https://{base_url}"
+        parsed = urlparse(base_url)
     
-    # Step 1: Try to discover official sitemaps
-    sitemap_urls = await discover_sitemaps(base_url, max_sitemaps=max_sitemaps)
+    if not parsed.netloc:
+        raise ValueError("Base URL must include a domain (e.g., https://example.com)")
     
-    # Step 2: If sitemaps found, parse them
-    if sitemap_urls:
-        print(f"  📊 Parsing {len(sitemap_urls)} sitemap(s)...")
-        
-        visited_sitemaps: Set[str] = set()
-        all_urls: Set[str] = set()
-        
-        for sitemap_url in sitemap_urls:
-            if len(all_urls) >= max_urls:
-                break
-            
-            urls = await parse_sitemap_urls(
-                sitemap_url,
-                base_netloc,
-                visited_sitemaps,
-                max_urls=max_urls - len(all_urls),
-                max_sitemaps=max_sitemaps
-            )
-            
-            all_urls.update(urls)
-        
-        print(f"  ✅ Collected {len(all_urls)} URLs from sitemaps")
-        
-        if all_urls:
-            return list(all_urls)
+    # Step 1: Discover sitemap URLs
+    sitemap_urls = await discover_sitemaps(base_url)
     
-    # Step 3: Fallback - build sitemap from navigation
-    print(f"  ⚠️  No official sitemap found or empty sitemap")
-    return await build_sitemap_from_navigation(base_url, max_urls=max_urls)
+    if not sitemap_urls:
+        logger.warning(f"No sitemaps found for {base_url}, falling back to navigation crawling")
+        print(f"  ⚠️  No official sitemap found or empty sitemap")
+        return await build_sitemap_from_navigation(base_url, max_urls=max_urls)
+    
+    # Step 2: Fetch and parse all sitemaps concurrently
+    print(f"  📊 Parsing {len(sitemap_urls)} sitemap(s)...")
+    
+    # Limit to max_sitemaps
+    sitemap_urls = sitemap_urls[:max_sitemaps]
+    
+    # Fetch all sitemaps concurrently
+    tasks = [fetch_sitemap(url) for url in sitemap_urls]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    # Collect all URLs
+    all_urls = []
+    for i, result in enumerate(results):
+        if isinstance(result, list):
+            all_urls.extend(result)
+            logger.info(f"Sitemap {sitemap_urls[i]}: {len(result)} URLs")
+        elif isinstance(result, Exception):
+            logger.error(f"Failed to parse sitemap {sitemap_urls[i]}: {result}")
+    
+    # Step 3: Deduplicate
+    unique_urls = list(set(all_urls))
+    logger.info(f"Total unique URLs: {len(unique_urls)}")
+    
+    # Step 4: Limit to max_urls
+    if len(unique_urls) > max_urls:
+        logger.warning(f"Limiting to {max_urls} URLs (found {len(unique_urls)})")
+        unique_urls = unique_urls[:max_urls]
+    
+    print(f"  ✅ Collected {len(unique_urls)} URLs from sitemaps")
+    
+    if not unique_urls:
+        logger.warning("Sitemaps were empty, falling back to navigation crawling")
+        print(f"  ⚠️  No official sitemap found or empty sitemap")
+        return await build_sitemap_from_navigation(base_url, max_urls=max_urls)
+    
+    logger.info(f"✓ Crawl complete: {len(unique_urls)} URLs, {len(sitemap_urls)} sitemaps")
+    
+    return unique_urls

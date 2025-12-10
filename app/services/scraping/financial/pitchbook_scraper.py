@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import logging
 import re
+import os
 import asyncio
 from typing import Any
 from bs4 import BeautifulSoup
@@ -22,20 +23,75 @@ import httpx
 logger = logging.getLogger(__name__)
 
 
-async def search_pitchbook_url(company_name: str) -> str | None:
+async def search_pitchbook_url_direct(company_name: str) -> str | None:
+    """
+    Try to find PitchBook URL by direct pattern matching.
+    Uses common company ID patterns to construct potential URLs.
+    
+    This is the fastest method as it doesn't require external searches.
+    """
+    print(f"[PITCHBOOK] 🎯 Trying direct URL pattern matching...")
+    
+    # Normalize company name for search
+    normalized = company_name.lower().replace(' ', '-').replace('.', '').replace(',', '')
+    
+    # Try common patterns (this would need a lookup table in production)
+    # For now, we'll skip this and go straight to search
+    return None
+
+
+async def search_pitchbook_url_brave(company_name: str) -> str | None:
+    """
+    Search using Brave Search API - better rate limits than DuckDuckGo.
+    Free tier: 2000 queries/month, no credit card needed.
+    """
+    try:
+        # Check if Brave API key is available
+        brave_api_key = os.getenv("BRAVE_SEARCH_API_KEY")
+        if not brave_api_key:
+            return None
+        
+        print(f"[PITCHBOOK] 🦁 Trying Brave Search API...")
+        
+        query = f"site:pitchbook.com/profiles/company {company_name}"
+        url = "https://api.search.brave.com/res/v1/web/search"
+        
+        headers = {
+            "Accept": "application/json",
+            "X-Subscription-Token": brave_api_key
+        }
+        
+        params = {
+            "q": query,
+            "count": 10
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url, headers=headers, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            results = data.get("web", {}).get("results", [])
+            
+            for result in results:
+                result_url = result.get("url", "")
+                if "pitchbook.com/profiles/company/" in result_url:
+                    print(f"[PITCHBOOK] ✅ Found via Brave: {result_url}")
+                    return result_url
+        
+        return None
+        
+    except Exception as e:
+        logger.debug(f"Brave Search failed: {e}")
+        return None
+
+
+async def search_pitchbook_url_duckduckgo(company_name: str) -> str | None:
     """
     Search for a company's PitchBook profile URL using DuckDuckGo HTML search.
-    DuckDuckGo is more bot-friendly than Google and doesn't require API keys.
-    
     Implements retry logic with exponential backoff to handle rate limiting.
-    
-    Args:
-        company_name: Company name to search for
-        
-    Returns:
-        PitchBook profile URL string or None if not found
     """
-    print(f"\n[PITCHBOOK] 🔍 Step 1: Searching for: {company_name}")
+    print(f"[PITCHBOOK] 🦆 Trying DuckDuckGo search...")
     logger.info(f"Starting DuckDuckGo search for PitchBook profile: {company_name}")
     
     max_retries = 3
@@ -190,6 +246,106 @@ async def search_pitchbook_url(company_name: str) -> str | None:
     # All retries exhausted
     print(f"[PITCHBOOK] ❌ All {max_retries} attempts failed")
     logger.error(f"All retry attempts exhausted for: {company_name}")
+    return None
+
+
+async def search_pitchbook_url(company_name: str) -> str | None:
+    """
+    Fast failover search for PitchBook URL.
+    Strategy: Try DuckDuckGo first (fastest when working), but immediately 
+    failover to Brave Search API on first sign of rate limiting.
+    
+    This gives us:
+    - Speed: DuckDuckGo is fast when not rate limited
+    - Reliability: Instant failover to Brave when rate limited
+    
+    Args:
+        company_name: Company name to search for
+        
+    Returns:
+        PitchBook profile URL string or None if not found
+    """
+    print(f"\n[PITCHBOOK] 🔍 Step 1: Searching for: {company_name}")
+    
+    # Try DuckDuckGo first (no retry on rate limit - instant failover)
+    try:
+        query = f"site:pitchbook.com/profiles/company {company_name}"
+        search_url = "https://html.duckduckgo.com/html/"
+        
+        print(f"[PITCHBOOK] 🦆 Trying DuckDuckGo...")
+        
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+        
+        data = {
+            'q': query,
+            'b': '',
+            'kl': 'us-en'
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+            response = await client.post(search_url, data=data, headers=headers)
+            
+            # Instant failover on rate limit
+            if response.status_code == 202:
+                print(f"[PITCHBOOK] ⚠️  DuckDuckGo rate limited (202) - failing over to Brave...")
+                raise Exception("Rate limited - failover to Brave")
+            
+            response.raise_for_status()
+            
+            # Parse results
+            soup = BeautifulSoup(response.text, 'html.parser')
+            result_links = soup.find_all('a', class_='result__url')
+            all_links = soup.find_all('a', href=True)
+            
+            # Check result links
+            for link in result_links:
+                url_text = link.get_text(strip=True)
+                if 'pitchbook.com/profiles/company/' in url_text:
+                    url = f"https://{url_text}" if not url_text.startswith('http') else url_text
+                    print(f"[PITCHBOOK] ✅ Found via DuckDuckGo: {url}")
+                    print(f"\n[PITCHBOOK] ✅ SUCCESS! Got PitchBook URL: {url}")
+                    print(f"[PITCHBOOK] 🔄 Now proceeding to scrape the profile page...")
+                    print("="*70 + "\n")
+                    return url
+            
+            # Check all links
+            for link in all_links:
+                href = link.get('href', '')
+                if 'pitchbook.com/profiles/company/' in href:
+                    if href.startswith('http'):
+                        print(f"[PITCHBOOK] ✅ Found via DuckDuckGo: {href}")
+                        print(f"\n[PITCHBOOK] ✅ SUCCESS! Got PitchBook URL: {href}")
+                        print(f"[PITCHBOOK] 🔄 Now proceeding to scrape the profile page...")
+                        print("="*70 + "\n")
+                        return href
+                    elif href.startswith('//'):
+                        url = f"https:{href}"
+                        print(f"[PITCHBOOK] ✅ Found via DuckDuckGo: {url}")
+                        print(f"\n[PITCHBOOK] ✅ SUCCESS! Got PitchBook URL: {url}")
+                        print(f"[PITCHBOOK] 🔄 Now proceeding to scrape the profile page...")
+                        print("="*70 + "\n")
+                        return url
+            
+            # No results from DuckDuckGo - try Brave
+            print(f"[PITCHBOOK] ⚠️  No results from DuckDuckGo - trying Brave...")
+            
+    except Exception as e:
+        logger.debug(f"DuckDuckGo failed, failing over to Brave: {e}")
+    
+    # Failover to Brave Search API
+    url = await search_pitchbook_url_brave(company_name)
+    if url:
+        print(f"\n[PITCHBOOK] ✅ SUCCESS! Got PitchBook URL: {url}")
+        print(f"[PITCHBOOK] 🔄 Now proceeding to scrape the profile page...")
+        print("="*70 + "\n")
+        return url
+    
+    print(f"[PITCHBOOK] ❌ No PitchBook profile URL found")
     return None
 
 
@@ -348,17 +504,23 @@ async def scrape_pitchbook_profile(url: str) -> dict | None:
                                 "status": cells[5].get_text(strip=True)
                             }
                             data["funding_rounds"].append(round_data)
-                    
-                    # Get the most recent "Raised to Date" value that's visible
-                    for round in data["funding_rounds"]:
-                        if round["raised_to_date"] and round["raised_to_date"] != "":
-                            data["total_raised"] = round["raised_to_date"]
-                            print(f"[PITCHBOOK] ✓ Total Raised: {data['total_raised']}")
-                            break
             
-            # Extract investors from FAQs section
+            # Extract data from FAQs section
             faqs_section = soup.find('section', id='faqs')
             if faqs_section:
+                # Find the FAQ about total funding raised
+                funding_question = faqs_section.find('h3', string=re.compile("How much funding has.*raised", re.I))
+                if funding_question:
+                    funding_answer = funding_question.find_next('p')
+                    if funding_answer:
+                        # Extract the amount from text like "Stripe has raised $8.73B."
+                        funding_text = funding_answer.get_text(strip=True)
+                        # Match patterns like "$8.73B", "$612M", "$1.2B", etc.
+                        amount_match = re.search(r'\$[\d.]+[BMK]', funding_text)
+                        if amount_match:
+                            data["total_raised"] = amount_match.group(0)
+                            print(f"[PITCHBOOK] ✓ Total Raised (from FAQ): {data['total_raised']}")
+                
                 # Find the FAQ about investors
                 investor_question = faqs_section.find('h3', string=re.compile("Who are.*investors", re.I))
                 if investor_question:

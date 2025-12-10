@@ -1,0 +1,1479 @@
+{
+  "company_name": "Apple",
+  "identity": {
+    "name": "Apple Inc.",
+    "ticker": "AAPL",
+    "website": "https://www.apple.com",
+    "description": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide. It also sells related services, including AppleCare support, cloud services, and digital content and payment services.",
+    "industry": "Technology Hardware, Software, and Services",
+    "headquarters": "ONE APPLE PARK WAY\nCUPERTINO, CA 95014",
+    "founded_year": 1976,
+    "status": "Public",
+    "employees": "161,000 (as of September 2023)"
+  },
+  "financials": {
+    "revenue": 416161000000.0,
+    "net_income": 112010000000.0,
+    "assets": null,
+    "liabilities": null,
+    "equity": null,
+    "cash_flow": 12863000000.0,
+    "fiscal_year": "2025",
+    "income_statement": [
+      {
+        "metric": "Total Revenue",
+        "2025": 416161000000.0,
+        "2024": 391035000000.0,
+        "2023": 383285000000.0,
+        "2022": 394328000000.0,
+        "2021": 365817000000.0
+      },
+      {
+        "metric": "Operating Income (Loss)",
+        "2025": 133050000000.0,
+        "2024": 123216000000.0,
+        "2023": 114301000000.0,
+        "2022": 119437000000.0,
+        "2021": 108949000000.0
+      },
+      {
+        "metric": "Net Income (Loss) Attributable to Parent",
+        "2025": 112010000000.0,
+        "2024": 93736000000.0,
+        "2023": 96995000000.0,
+        "2022": 99803000000.0,
+        "2021": 94680000000.0
+      },
+      {
+        "metric": "Earnings Per Share, Basic",
+        "2025": 7.49,
+        "2024": 6.11,
+        "2023": 6.16,
+        "2022": 6.15,
+        "2021": 5.67
+      },
+      {
+        "metric": "Earnings Per Share, Diluted",
+        "2025": 7.46,
+        "2024": 6.08,
+        "2023": 6.13,
+        "2022": 6.11,
+        "2021": 5.61
+      },
+      {
+        "metric": "Income Tax Expense (Benefit)",
+        "2025": 20719000000.0,
+        "2024": 29749000000.0,
+        "2023": 16741000000.0,
+        "2022": 19300000000.0,
+        "2021": 14527000000.0
+      },
+      {
+        "metric": "Income (Loss) from Continuing Operations before Income Taxes, Noncontrolling Interest",
+        "2025": 132729000000.0,
+        "2024": 123485000000.0,
+        "2023": 113736000000.0,
+        "2022": 119103000000.0,
+        "2021": 109207000000.0
+      },
+      {
+        "metric": "Gross Profit",
+        "2025": 195201000000.0,
+        "2024": 180683000000.0,
+        "2023": 169148000000.0,
+        "2022": 170782000000.0,
+        "2021": 152836000000.0
+      },
+      {
+        "metric": "Operating Expenses",
+        "2025": 62151000000.0,
+        "2024": 57467000000.0,
+        "2023": 54847000000.0,
+        "2022": 51345000000.0,
+        "2021": 43887000000.0
+      }
+    ],
+    "balance_sheet": [
+      {
+        "metric": "Assets",
+        "2025": 359241000000.0,
+        "2024": 364980000000.0,
+        "2023": 352583000000.0,
+        "2022": 352755000000.0,
+        "2021": 351002000000.0
+      },
+      {
+        "metric": "Assets, Current",
+        "2025": 147957000000.0,
+        "2024": 152987000000.0,
+        "2023": 143566000000.0,
+        "2022": 135405000000.0,
+        "2021": 134836000000.0
+      },
+      {
+        "metric": "Cash and Cash Equivalents, at Carrying Value",
+        "2025": 35934000000.0,
+        "2024": 29943000000.0,
+        "2023": 29965000000.0,
+        "2022": 23646000000.0,
+        "2021": 34940000000.0
+      },
+      {
+        "metric": "Accounts Receivable (Aggregated)",
+        "2025": 147957000000.0,
+        "2024": 152987000000.0,
+        "2023": 143566000000.0,
+        "2022": 135405000000.0,
+        "2021": 134836000000.0
+      },
+      {
+        "metric": "Property, Plant and Equipment, Net",
+        "2025": 49834000000.0,
+        "2024": 45680000000.0,
+        "2023": 43715000000.0,
+        "2022": 42117000000.0,
+        "2021": 39440000000.0
+      },
+      {
+        "metric": "Other Assets, Noncurrent",
+        "2025": 83727000000.0,
+        "2024": 74834000000.0,
+        "2023": 64758000000.0,
+        "2022": 54428000000.0,
+        "2021": 48849000000.0
+      },
+      {
+        "metric": "Liabilities and Equity",
+        "2025": 359241000000.0,
+        "2024": 364980000000.0,
+        "2023": 352583000000.0,
+        "2022": 352755000000.0,
+        "2021": 351002000000.0
+      },
+      {
+        "metric": "Liabilities",
+        "2025": 285508000000.0,
+        "2024": 308030000000.0,
+        "2023": 290437000000.0,
+        "2022": 302083000000.0,
+        "2021": 287912000000.0
+      },
+      {
+        "metric": "Liabilities, Current",
+        "2025": 165631000000.0,
+        "2024": 176392000000.0,
+        "2023": 145308000000.0,
+        "2022": 153982000000.0,
+        "2021": 125481000000.0
+      },
+      {
+        "metric": "Liabilities, Noncurrent",
+        "2025": 119877000000.0,
+        "2024": 131638000000.0,
+        "2023": 145129000000.0,
+        "2022": 148101000000.0,
+        "2021": 162431000000.0
+      },
+      {
+        "metric": "Other Liabilities, Noncurrent",
+        "2025": 41549000000.0,
+        "2024": 45888000000.0,
+        "2023": 49848000000.0,
+        "2022": 49142000000.0,
+        "2021": 53325000000.0
+      },
+      {
+        "metric": "Retained Earnings (Accumulated Deficit)",
+        "2025": -14264000000.0,
+        "2024": -19154000000.0,
+        "2023": -214000000.0,
+        "2022": -3068000000.0,
+        "2021": 5562000000.0
+      },
+      {
+        "metric": "Stockholders' Equity Attributable to Parent",
+        "2025": 73733000000.0,
+        "2024": 56950000000.0,
+        "2023": 62146000000.0,
+        "2022": 50672000000.0,
+        "2021": 63090000000.0
+      },
+      {
+        "metric": "Accumulated Other Comprehensive Income (Loss), Net of Tax",
+        "2025": -5571000000.0,
+        "2024": -7172000000.0,
+        "2023": -11452000000.0,
+        "2022": -11109000000.0,
+        "2021": 163000000.0
+      }
+    ],
+    "cash_flow_statement": [
+      {
+        "metric": "Cash, Cash Equivalents, Restricted Cash and Restricted Cash Equivalents",
+        "2025": 35934000000.0,
+        "2024": 29943000000.0,
+        "2023": 30737000000.0,
+        "2022": 24977000000.0,
+        "2021": 35929000000.0
+      },
+      {
+        "metric": "Cash flows from financing activities: (Aggregated)",
+        "2025": -29975000000.0,
+        "2024": -27034000000.0,
+        "2023": -30938000000.0,
+        "2022": -21347000000.0,
+        "2021": -7382000000.0
+      },
+      {
+        "metric": "Net Cash Provided by (Used in) Financing Activities",
+        "2025": -120686000000.0,
+        "2024": -121983000000.0,
+        "2023": -108488000000.0,
+        "2022": -110749000000.0,
+        "2021": -93353000000.0
+      },
+      {
+        "metric": "Payments for Repurchase of Common Stock",
+        "2025": 90711000000.0,
+        "2024": 94949000000.0,
+        "2023": 77550000000.0,
+        "2022": 89402000000.0,
+        "2021": 85971000000.0
+      },
+      {
+        "metric": "Cash flows from investing activities: (Aggregated)",
+        "2025": 43105000000.0,
+        "2024": 15317000000.0,
+        "2023": 18369000000.0,
+        "2022": -34000000000.0,
+        "2021": -18005000000.0
+      },
+      {
+        "metric": "Net Cash Provided by (Used in) Investing Activities",
+        "2025": 15195000000.0,
+        "2024": 2935000000.0,
+        "2023": 3705000000.0,
+        "2022": -22354000000.0,
+        "2021": -14545000000.0
+      },
+      {
+        "metric": "Payments to Acquire Property, Plant, and Equipment",
+        "2025": 12715000000.0,
+        "2024": 9447000000.0,
+        "2023": 10959000000.0,
+        "2022": 10708000000.0,
+        "2021": 11085000000.0
+      },
+      {
+        "metric": "Payments to Acquire Businesses (Aggregated)",
+        "2025": 15195000000.0,
+        "2024": 2935000000.0,
+        "2023": 3705000000.0,
+        "2022": -22354000000.0,
+        "2021": -14545000000.0
+      },
+      {
+        "metric": "Cash flows from operating activities: (Aggregated)",
+        "2025": 124345000000.0,
+        "2024": 129942000000.0,
+        "2023": 121376000000.0,
+        "2022": 131189000000.0,
+        "2021": 111944000000.0
+      },
+      {
+        "metric": "Net Cash Provided by (Used in) Operating Activities",
+        "2025": 111482000000.0,
+        "2024": 118254000000.0,
+        "2023": 110543000000.0,
+        "2022": 122151000000.0,
+        "2021": 104038000000.0
+      },
+      {
+        "metric": "Adjustments to reconcile net income to net cash provided by operating activities: (Aggregated)",
+        "2025": 12863000000.0,
+        "2024": 11688000000.0,
+        "2023": 10833000000.0,
+        "2022": 9038000000.0,
+        "2021": 7906000000.0
+      },
+      {
+        "metric": "Share-based Payment Arrangement, Noncash Expense",
+        "2025": 12863000000.0,
+        "2024": 11688000000.0,
+        "2023": 10833000000.0,
+        "2022": 9038000000.0,
+        "2021": 7906000000.0
+      },
+      {
+        "metric": "Cash, Cash Equivalents, Restricted Cash and Restricted Cash Equivalents, Period Increase (Decrease), Including Exchange Rate Effect",
+        "2025": 5991000000.0,
+        "2024": -794000000.0,
+        "2023": 5760000000.0,
+        "2022": -10952000000.0,
+        "2021": -3860000000.0
+      }
+    ]
+  },
+  "funding": {
+    "total_raised": null,
+    "latest_deal_type": "IPO",
+    "funding_rounds": [],
+    "investors": []
+  },
+  "key_metrics": {
+    "shares_outstanding": "14,776,353,000",
+    "public_float": "$3,253,431,000,000"
+  },
+  "latest_filings": [
+    {
+      "form": "8-K",
+      "filing_date": "2025-12-05",
+      "report_date": "2025-12-04",
+      "accession_number": "0001140361-25-044561",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/0001140361-25-044561-index.html",
+      "text_url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/0001140361-25-044561.txt",
+      "primary_document": "ef20060722_8k.htm",
+      "acceptance_datetime": "2025-12-05 16:31:42+00:00",
+      "file_number": "001-36743",
+      "film_number": null,
+      "items": "5.02",
+      "is_xbrl": 1,
+      "exhibits": [],
+      "attachments": [
+        {
+          "description": "8-K",
+          "document": "ef20060722_8k.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/ef20060722_8k.htm"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION SCHEMA",
+          "document": "aapl-20251204.xsd",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/aapl-20251204.xsd"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION DEFINITION LINKBASE",
+          "document": "aapl-20251204_def.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/aapl-20251204_def.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION LABEL LINKBASE",
+          "document": "aapl-20251204_lab.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/aapl-20251204_lab.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION PRESENTATION LINKBASE",
+          "document": "aapl-20251204_pre.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/aapl-20251204_pre.xml"
+        },
+        {
+          "description": "GRAPHIC",
+          "document": "logo_apple.jpg",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/logo_apple.jpg"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R1.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/R1.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "Show.js",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/Show.js"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "report.css",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/report.css"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "FilingSummary.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/FilingSummary.xml"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "MetaLinks.json",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/MetaLinks.json"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "0001140361-25-044561-xbrl.zip",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/0001140361-25-044561-xbrl.zip"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "ef20060722_8k_htm.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036125044561/ef20060722_8k_htm.xml"
+        }
+      ]
+    },
+    {
+      "form": "10-K",
+      "filing_date": "2025-10-31",
+      "report_date": "2025-09-27",
+      "accession_number": "0000320193-25-000079",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/0000320193-25-000079-index.html",
+      "text_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt",
+      "primary_document": "aapl-20250927.htm",
+      "acceptance_datetime": "2025-10-31 06:01:26+00:00",
+      "file_number": "001-36743",
+      "film_number": null,
+      "items": "",
+      "is_xbrl": 1,
+      "exhibits": [
+        {
+          "description": "EX-4.1",
+          "document": "a10-kexhibit4109272025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/a10-kexhibit4109272025.htm"
+        },
+        {
+          "description": "EX-21.1",
+          "document": "a10-kexhibit21109272025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/a10-kexhibit21109272025.htm"
+        },
+        {
+          "description": "EX-23.1",
+          "document": "a10-kexhibit23109272025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/a10-kexhibit23109272025.htm"
+        },
+        {
+          "description": "EX-31.1",
+          "document": "a10-kexhibit31109272025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/a10-kexhibit31109272025.htm"
+        },
+        {
+          "description": "EX-31.2",
+          "document": "a10-kexhibit31209272025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/a10-kexhibit31209272025.htm"
+        },
+        {
+          "description": "EX-32.1",
+          "document": "a10-kexhibit32109272025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/a10-kexhibit32109272025.htm"
+        }
+      ],
+      "attachments": [
+        {
+          "description": "10-K",
+          "document": "aapl-20250927.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION SCHEMA DOCUMENT",
+          "document": "aapl-20250927.xsd",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.xsd"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION CALCULATION LINKBASE DOCUMENT",
+          "document": "aapl-20250927_cal.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927_cal.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION DEFINITION LINKBASE DOCUMENT",
+          "document": "aapl-20250927_def.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927_def.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION LABEL LINKBASE DOCUMENT",
+          "document": "aapl-20250927_lab.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927_lab.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION PRESENTATION LINKBASE DOCUMENT",
+          "document": "aapl-20250927_pre.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927_pre.xml"
+        },
+        {
+          "description": "",
+          "document": "aapl-20250927_g1.jpg",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927_g1.jpg"
+        },
+        {
+          "description": "",
+          "document": "aapl-20250927_g2.jpg",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927_g2.jpg"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R1.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R1.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R2.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R2.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R3.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R3.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R4.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R4.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R5.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R5.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R6.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R6.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R7.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R7.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R8.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R8.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R9.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R9.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R10.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R10.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R11.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R11.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R12.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R12.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R13.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R13.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R14.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R14.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R15.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R15.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R16.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R16.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R17.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R17.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R18.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R18.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R19.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R19.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R20.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R20.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R21.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R21.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R22.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R22.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R23.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R23.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R24.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R24.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R25.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R25.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R26.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R26.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R27.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R27.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R28.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R28.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R29.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R29.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R30.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R30.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R31.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R31.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R32.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R32.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R33.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R33.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R34.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R34.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R35.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R35.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R36.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R36.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R37.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R37.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R38.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R38.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R39.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R39.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R40.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R40.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R41.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R41.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R42.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R42.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R43.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R43.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R44.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R44.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R45.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R45.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R46.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R46.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R47.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R47.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R48.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R48.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R49.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R49.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R50.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R50.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R51.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R51.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R52.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R52.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R53.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R53.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R54.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R54.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R55.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R55.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R56.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R56.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R57.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R57.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R58.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R58.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R59.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R59.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R60.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R60.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R61.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R61.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R62.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R62.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R63.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R63.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R64.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R64.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R65.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R65.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R66.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R66.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R67.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R67.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R68.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R68.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R69.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R69.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R70.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/R70.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "Show.js",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/Show.js"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "report.css",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/report.css"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "FilingSummary.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/FilingSummary.xml"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "MetaLinks.json",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/MetaLinks.json"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "0000320193-25-000079-xbrl.zip",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-xbrl.zip"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "aapl-20250927_htm.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927_htm.xml"
+        }
+      ]
+    },
+    {
+      "form": "8-K",
+      "filing_date": "2025-10-30",
+      "report_date": "2025-10-30",
+      "accession_number": "0000320193-25-000077",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/0000320193-25-000077-index.html",
+      "text_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/0000320193-25-000077.txt",
+      "primary_document": "aapl-20251030.htm",
+      "acceptance_datetime": "2025-10-30 16:30:35+00:00",
+      "file_number": "001-36743",
+      "film_number": null,
+      "items": "2.02,9.01",
+      "is_xbrl": 1,
+      "exhibits": [
+        {
+          "description": "EX-99.1",
+          "document": "a8-kex991q4202509272025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/a8-kex991q4202509272025.htm"
+        }
+      ],
+      "attachments": [
+        {
+          "description": "8-K",
+          "document": "aapl-20251030.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/aapl-20251030.htm"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION SCHEMA DOCUMENT",
+          "document": "aapl-20251030.xsd",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/aapl-20251030.xsd"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION DEFINITION LINKBASE DOCUMENT",
+          "document": "aapl-20251030_def.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/aapl-20251030_def.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION LABEL LINKBASE DOCUMENT",
+          "document": "aapl-20251030_lab.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/aapl-20251030_lab.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION PRESENTATION LINKBASE DOCUMENT",
+          "document": "aapl-20251030_pre.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/aapl-20251030_pre.xml"
+        },
+        {
+          "description": "",
+          "document": "aapl-20251030_g1.jpg",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/aapl-20251030_g1.jpg"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R1.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/R1.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "Show.js",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/Show.js"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "report.css",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/report.css"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "FilingSummary.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/FilingSummary.xml"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "MetaLinks.json",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/MetaLinks.json"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "0000320193-25-000077-xbrl.zip",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/0000320193-25-000077-xbrl.zip"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "aapl-20251030_htm.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000077/aapl-20251030_htm.xml"
+        }
+      ]
+    },
+    {
+      "form": "10-Q",
+      "filing_date": "2025-08-01",
+      "report_date": "2025-06-28",
+      "accession_number": "0000320193-25-000073",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/0000320193-25-000073-index.html",
+      "text_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/0000320193-25-000073.txt",
+      "primary_document": "aapl-20250628.htm",
+      "acceptance_datetime": "2025-08-01 06:00:42+00:00",
+      "file_number": "001-36743",
+      "film_number": null,
+      "items": "",
+      "is_xbrl": 1,
+      "exhibits": [
+        {
+          "description": "EX-31.1",
+          "document": "a10-qexhibit31106282025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/a10-qexhibit31106282025.htm"
+        },
+        {
+          "description": "EX-31.2",
+          "document": "a10-qexhibit31206282025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/a10-qexhibit31206282025.htm"
+        },
+        {
+          "description": "EX-32.1",
+          "document": "a10-qexhibit32106282025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/a10-qexhibit32106282025.htm"
+        }
+      ],
+      "attachments": [
+        {
+          "description": "10-Q",
+          "document": "aapl-20250628.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION SCHEMA DOCUMENT",
+          "document": "aapl-20250628.xsd",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.xsd"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION CALCULATION LINKBASE DOCUMENT",
+          "document": "aapl-20250628_cal.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628_cal.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION DEFINITION LINKBASE DOCUMENT",
+          "document": "aapl-20250628_def.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628_def.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION LABEL LINKBASE DOCUMENT",
+          "document": "aapl-20250628_lab.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628_lab.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION PRESENTATION LINKBASE DOCUMENT",
+          "document": "aapl-20250628_pre.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628_pre.xml"
+        },
+        {
+          "description": "",
+          "document": "aapl-20250628_g1.jpg",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628_g1.jpg"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R1.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R1.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R2.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R2.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R3.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R3.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R4.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R4.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R5.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R5.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R6.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R6.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R7.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R7.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R8.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R8.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R9.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R9.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R10.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R10.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R11.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R11.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R12.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R12.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R13.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R13.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R14.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R14.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R15.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R15.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R16.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R16.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R17.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R17.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R18.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R18.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R19.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R19.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R20.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R20.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R21.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R21.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R22.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R22.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R23.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R23.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R24.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R24.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R25.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R25.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R26.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R26.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R27.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R27.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R28.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R28.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R29.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R29.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R30.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R30.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R31.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R31.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R32.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R32.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R33.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R33.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R34.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R34.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R35.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R35.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R36.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R36.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R37.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R37.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R38.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R38.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R39.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R39.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R40.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R40.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R41.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R41.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R42.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R42.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R43.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R43.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R44.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R44.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "Show.js",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/Show.js"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "report.css",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/report.css"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "FilingSummary.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/FilingSummary.xml"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "MetaLinks.json",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/MetaLinks.json"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "0000320193-25-000073-xbrl.zip",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/0000320193-25-000073-xbrl.zip"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "aapl-20250628_htm.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628_htm.xml"
+        }
+      ]
+    },
+    {
+      "form": "8-K",
+      "filing_date": "2025-07-31",
+      "report_date": "2025-07-31",
+      "accession_number": "0000320193-25-000071",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/0000320193-25-000071-index.html",
+      "text_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/0000320193-25-000071.txt",
+      "primary_document": "aapl-20250731.htm",
+      "acceptance_datetime": "2025-07-31 16:30:25+00:00",
+      "file_number": "001-36743",
+      "film_number": null,
+      "items": "2.02,9.01",
+      "is_xbrl": 1,
+      "exhibits": [
+        {
+          "description": "EX-99.1",
+          "document": "a8-kex991q3202506282025.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/a8-kex991q3202506282025.htm"
+        }
+      ],
+      "attachments": [
+        {
+          "description": "8-K",
+          "document": "aapl-20250731.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/aapl-20250731.htm"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION SCHEMA DOCUMENT",
+          "document": "aapl-20250731.xsd",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/aapl-20250731.xsd"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION DEFINITION LINKBASE DOCUMENT",
+          "document": "aapl-20250731_def.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/aapl-20250731_def.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION LABEL LINKBASE DOCUMENT",
+          "document": "aapl-20250731_lab.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/aapl-20250731_lab.xml"
+        },
+        {
+          "description": "XBRL TAXONOMY EXTENSION PRESENTATION LINKBASE DOCUMENT",
+          "document": "aapl-20250731_pre.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/aapl-20250731_pre.xml"
+        },
+        {
+          "description": "",
+          "document": "aapl-20250731_g1.jpg",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/aapl-20250731_g1.jpg"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "R1.htm",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/R1.htm"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "Show.js",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/Show.js"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "report.css",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/report.css"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "FilingSummary.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/FilingSummary.xml"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "MetaLinks.json",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/MetaLinks.json"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "0000320193-25-000071-xbrl.zip",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/0000320193-25-000071-xbrl.zip"
+        },
+        {
+          "description": "IDEA: XBRL DOCUMENT",
+          "document": "aapl-20250731_htm.xml",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000071/aapl-20250731_htm.xml"
+        }
+      ]
+    }
+  ],
+  "insiders": [
+    {
+      "insider": "Timothy D Cook",
+      "position": "Chief Executive Officer"
+    },
+    {
+      "insider": "Deirdre O'Brien",
+      "position": "Senior Vice President"
+    },
+    {
+      "insider": "Kevan Parekh",
+      "position": "Senior Vice President, CFO"
+    },
+    {
+      "insider": "Katherine L. Adams",
+      "position": "SVP, GC and Secretary"
+    },
+    {
+      "insider": "Arthur D Levinson",
+      "position": "Director"
+    },
+    {
+      "insider": "Sabih Khan",
+      "position": "COO"
+    },
+    {
+      "insider": "Chris Kondo",
+      "position": "Principal Accounting Officer"
+    }
+  ],
+  "competitors": [
+    {
+      "name": "Samsung Electronics",
+      "location": "Suwon, South Korea",
+      "website": "https://www.samsung.com",
+      "description": "Samsung Electronics is a global leader in consumer electronics, semiconductors, and mobile communications. It produces a wide range of products including smartphones, TVs, home appliances, and memory chips.",
+      "advantages": "Broad product portfolio across consumer electronics and components, strong presence in emerging markets, significant investment in R&D for display and semiconductor technologies.",
+      "focus_areas": [
+        "Mobile Devices (Smartphones, Tablets)",
+        "Semiconductors (Memory, Processors)",
+        "Consumer Electronics (TVs, Appliances)",
+        "Display Technology"
+      ]
+    },
+    {
+      "name": "Alphabet Inc. (Google)",
+      "location": "Mountain View, California, USA",
+      "website": "https://abc.xyz",
+      "description": "Alphabet Inc. is a multinational technology conglomerate with a wide range of products and services, including search engines, online advertising technologies, cloud computing, software, and hardware. Its most well-known subsidiary is Google.",
+      "advantages": "Dominance in search and online advertising, extensive cloud infrastructure and AI capabilities, strong ecosystem of software and services (Android, Google Workspace).",
+      "focus_areas": [
+        "Search and Online Advertising",
+        "Cloud Computing (Google Cloud)",
+        "Artificial Intelligence and Machine Learning",
+        "Mobile Operating Systems (Android)",
+        "Software and Services"
+      ]
+    },
+    {
+      "name": "Microsoft Corporation",
+      "location": "Redmond, Washington, USA",
+      "website": "https://www.microsoft.com",
+      "description": "Microsoft Corporation is a technology company that develops, licenses, and supports a wide range of software products, services, and devices. Its offerings include the Windows operating system, Office productivity suite, Azure cloud services, and Xbox gaming consoles.",
+      "advantages": "Strong enterprise software and cloud presence (Azure, Microsoft 365), dominant position in PC operating systems, diversified revenue streams across software, hardware, and services.",
+      "focus_areas": [
+        "Cloud Computing (Azure)",
+        "Productivity Software (Microsoft 365)",
+        "Operating Systems (Windows)",
+        "Gaming (Xbox)",
+        "Enterprise Solutions"
+      ]
+    },
+    {
+      "name": "Amazon.com, Inc.",
+      "location": "Seattle, Washington, USA",
+      "website": "https://www.amazon.com",
+      "description": "Amazon.com, Inc. is an e-commerce giant that also operates a leading cloud computing platform (Amazon Web Services - AWS), digital streaming, and artificial intelligence. It offers a vast array of products and services.",
+      "advantages": "Unrivaled e-commerce scale and logistics, dominant cloud computing market share (AWS), strong ecosystem of digital services and devices (Echo, Kindle).",
+      "focus_areas": [
+        "E-commerce and Retail",
+        "Cloud Computing (AWS)",
+        "Digital Streaming and Content",
+        "Artificial Intelligence and Smart Devices",
+        "Logistics and Fulfillment"
+      ]
+    },
+    {
+      "name": "Meta Platforms, Inc.",
+      "location": "Menlo Park, California, USA",
+      "website": "https://about.meta.com",
+      "description": "Meta Platforms, Inc. is a technology company focused on building social technologies that enable people to connect, find communities, and grow businesses. Its platforms include Facebook, Instagram, WhatsApp, and Oculus.",
+      "advantages": "Massive global user base across its social media platforms, significant investment in virtual and augmented reality (Metaverse), strong advertising revenue model.",
+      "focus_areas": [
+        "Social Media (Facebook, Instagram)",
+        "Messaging (WhatsApp)",
+        "Virtual and Augmented Reality (Metaverse)",
+        "Digital Advertising",
+        "Communication Platforms"
+      ]
+    }
+  ],
+  "_internal": {
+    "data_source": "edgar",
+    "is_public": true,
+    "needs_ai_enrichment": true
+  }
+}

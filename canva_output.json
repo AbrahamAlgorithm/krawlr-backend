@@ -1,0 +1,187 @@
+{
+  "company_name": "Canva",
+  "identity": {
+    "name": "Canva",
+    "ticker": null,
+    "website": "www.canva.com",
+    "description": "Operator of an online graphic design platform intended to democratize design and visual communication access. The company's platform offers drag-and-drop features and professional layouts to consistently design graphics through a vast collection of professionally designed layouts to personalize the design with a stock library of photographs, illustrations, and imagery, enabling companies and users to customize presentations and social media graphics with appropriate layouts.",
+    "industry": "Multimedia and Design Software",
+    "headquarters": "110 Kippax Street, Surry Hills, New South Wales 2010, Australia",
+    "founded_year": "2012",
+    "status": "Private",
+    "employees": "5,500"
+  },
+  "financials": {
+    "revenue": null,
+    "net_income": null,
+    "assets": null,
+    "liabilities": null,
+    "equity": null,
+    "cash_flow": null,
+    "fiscal_year": null,
+    "income_statement": [],
+    "balance_sheet": [],
+    "cash_flow_statement": []
+  },
+  "funding": {
+    "total_raised": "$612M",
+    "latest_deal_type": "2ndary - Private",
+    "funding_rounds": [
+      {
+        "deal_type": "23. Secondary Transaction - Private",
+        "date": "20-Aug-2025",
+        "amount": "$18.3M",
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "22. Later Stage VC",
+        "date": "01-Jan-2025",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "21. Debt - General",
+        "date": "",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "20. Later Stage VC",
+        "date": "12-Sep-2024",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "19. Secondary Transaction - Private",
+        "date": "08-Apr-2024",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "18. Secondary Transaction - Private",
+        "date": "22-Jan-2024",
+        "amount": null,
+        "raised_to_date": null,
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "17. Later Stage VC",
+        "date": "08-Jan-2024",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "16. Secondary Transaction - Private",
+        "date": "",
+        "amount": "",
+        "raised_to_date": null,
+        "post_val": "",
+        "status": "Completed"
+      },
+      {
+        "deal_type": "15. Secondary Transaction - Private",
+        "date": "08-Aug-2023",
+        "amount": "$150M",
+        "raised_to_date": "$612M",
+        "post_val": null,
+        "status": "Completed"
+      },
+      {
+        "deal_type": "14. Later Stage VC",
+        "date": "01-Oct-2022",
+        "amount": "",
+        "raised_to_date": "$612M",
+        "post_val": "",
+        "status": "Completed"
+      }
+    ],
+    "investors": [
+      "CapitalG",
+      "Deck2 Capital",
+      "Sangha Capital",
+      "3Spoke Capital"
+    ]
+  },
+  "key_metrics": {
+    "shares_outstanding": null,
+    "public_float": null
+  },
+  "latest_filings": [],
+  "insiders": [],
+  "competitors": [
+    {
+      "name": "Adobe Creative Cloud",
+      "location": "San Jose, California, USA",
+      "website": "https://www.adobe.com/creativecloud.html",
+      "description": "Adobe Creative Cloud is a suite of powerful desktop and mobile applications for graphic design, video editing, web development, and photography. It offers industry-standard tools like Photoshop, Illustrator, and Premiere Pro, catering to professional designers and creatives.",
+      "advantages": "Offers a comprehensive and professional-grade toolset with deep functionality for advanced design tasks. Strong integration across its suite of products. Established brand recognition and a large professional user base.",
+      "focus_areas": [
+        "Professional graphic design",
+        "Video editing and motion graphics",
+        "Web and UX design",
+        "Photography and image manipulation",
+        "Enterprise solutions"
+      ]
+    },
+    {
+      "name": "Figma",
+      "location": "San Francisco, California, USA",
+      "website": "https://www.figma.com",
+      "description": "Figma is a cloud-based design tool that focuses on collaborative interface design and prototyping. It allows multiple users to work on the same design file simultaneously, making it ideal for teams and real-time collaboration.",
+      "advantages": "Exceptional real-time collaboration features. Strong focus on UI/UX design and prototyping. Browser-based accessibility, requiring no downloads for basic use. Robust plugin ecosystem.",
+      "focus_areas": [
+        "UI/UX design",
+        "Collaborative design workflows",
+        "Prototyping and user testing",
+        "Design systems",
+        "Web and mobile app design"
+      ]
+    },
+    {
+      "name": "VistaCreate (formerly Crello)",
+      "location": "Cyprus",
+      "website": "https://create.vista.com/",
+      "description": "VistaCreate is an online graphic design tool that provides a wide range of templates and design assets for social media, marketing, and other visual content. It aims to offer an easy-to-use platform for creating professional-looking designs quickly.",
+      "advantages": "Offers a vast library of templates and design elements, similar to Canva. Competitive pricing and often bundled with other Vista services. User-friendly interface suitable for beginners.",
+      "focus_areas": [
+        "Social media graphics",
+        "Marketing materials",
+        "Presentations",
+        "Easy-to-use design tools",
+        "Template-driven design"
+      ]
+    },
+    {
+      "name": "Piktochart",
+      "location": "Kuala Lumpur, Malaysia",
+      "website": "https://piktochart.com/",
+      "description": "Piktochart is an online infographic maker and design tool that helps users create visually engaging presentations, reports, and infographics. It offers a variety of templates and design elements tailored for data visualization and storytelling.",
+      "advantages": "Specializes in creating professional infographics and data visualizations. Offers tools specifically for reports and presentations. User-friendly interface for non-designers.",
+      "focus_areas": [
+        "Infographics",
+        "Data visualization",
+        "Reports and presentations",
+        "Educational materials",
+        "Business reporting"
+      ]
+    }
+  ],
+  "_internal": {
+    "data_source": "pitchbook",
+    "is_public": false,
+    "needs_ai_enrichment": true
+  }
+}

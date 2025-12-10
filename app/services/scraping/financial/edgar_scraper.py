@@ -7,6 +7,221 @@ from typing import Any
 import re
 import os
 
+# PRIVATE COMPANY ALLOWLIST - Known unicorns that should NEVER match to public tickers
+PRIVATE_COMPANY_ALLOWLIST = {
+    "stripe": {"domain": "stripe.com", "valuation": "$65B+", "name": "Stripe, Inc."},
+    "canva": {"domain": "canva.com", "valuation": "$32B+", "name": "Canva Pty Ltd"},
+    "spacex": {"domain": "spacex.com", "valuation": "$180B+", "name": "Space Exploration Technologies Corp."},
+    "databricks": {"domain": "databricks.com", "valuation": "$43B+", "name": "Databricks, Inc."},
+    "bytedance": {"domain": "bytedance.com", "valuation": "$225B+", "name": "ByteDance Ltd."},
+    "shein": {"domain": "shein.com", "valuation": "$66B+", "name": "Shein"},
+    "revolut": {"domain": "revolut.com", "valuation": "$33B+", "name": "Revolut Ltd"},
+    "klarna": {"domain": "klarna.com", "valuation": "$6.7B+", "name": "Klarna Bank AB"},
+    "instacart": {"domain": "instacart.com", "valuation": "$39B+", "name": "Maplebear Inc. (Instacart)"},
+    "epic games": {"domain": "epicgames.com", "valuation": "$32B+", "name": "Epic Games, Inc."},
+    "openai": {"domain": "openai.com", "valuation": "$157B+", "name": "OpenAI, Inc."},
+    "anthropic": {"domain": "anthropic.com", "valuation": "$18B+", "name": "Anthropic PBC"},
+    "xai": {"domain": "x.ai", "valuation": "$50B+", "name": "xAI"},
+    "figure ai": {"domain": "figure.ai", "valuation": "$2.6B+", "name": "Figure AI, Inc."},
+    "chime": {"domain": "chime.com", "valuation": "$25B+", "name": "Chime Financial, Inc."},
+    "discord": {"domain": "discord.com", "valuation": "$15B+", "name": "Discord Inc."},
+    "notion": {"domain": "notion.so", "valuation": "$10B+", "name": "Notion Labs Inc."},
+    "plaid": {"domain": "plaid.com", "valuation": "$13.4B+", "name": "Plaid Inc."},
+}
+
+
+def is_private_unicorn(company_name: str) -> dict | None:
+    """
+    Check if company is a known private unicorn that should skip ticker lookup.
+    
+    Args:
+        company_name: Company name to check
+        
+    Returns:
+        Company info dict if matched, None otherwise
+    """
+    company_lower = company_name.lower().strip()
+    
+    for key, info in PRIVATE_COMPANY_ALLOWLIST.items():
+        if key in company_lower or company_lower in key:
+            print(f"[EDGAR] 🦄 Matched private unicorn: {info['name']}")
+            print(f"[EDGAR] ⚠️  Skipping ticker lookup to avoid false matches")
+            return info
+    
+    return None
+
+
+async def verify_company_domain(ticker: str, expected_domain: str) -> bool:
+    """
+    Verify that a ticker's company domain matches the expected domain.
+    This prevents matching wrong companies with similar names.
+    
+    Args:
+        ticker: Stock ticker symbol
+        expected_domain: Expected company domain (e.g., "canva.com")
+        
+    Returns:
+        True if domains match, False otherwise
+    """
+    try:
+        import httpx
+        from urllib.parse import urlparse
+        
+        # Get company info from Yahoo Finance
+        url = f"https://query2.finance.yahoo.com/v10/finance/quoteSummary/{ticker}"
+        params = {
+            'modules': 'assetProfile'
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url, params=params, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Extract company website
+            profile = data.get('quoteSummary', {}).get('result', [{}])[0].get('assetProfile', {})
+            company_website = profile.get('website', '')
+            
+            if not company_website:
+                print(f"[EDGAR] ⚠️  No website found for ticker {ticker}")
+                return False
+            
+            # Extract domains
+            actual_domain = urlparse(company_website).netloc.replace('www.', '')
+            expected_clean = expected_domain.replace('www.', '')
+            
+            match = actual_domain.lower() == expected_clean.lower()
+            
+            if match:
+                print(f"[EDGAR] ✓ Domain verified: {actual_domain} matches {expected_clean}")
+            else:
+                print(f"[EDGAR] ✗ Domain mismatch: {actual_domain} != {expected_clean}")
+                print(f"[EDGAR] ⚠️  Rejecting ticker {ticker} - wrong company!")
+            
+            return match
+            
+    except Exception as e:
+        print(f"[EDGAR] ⚠️  Domain verification failed: {e}")
+        # On error, be conservative and reject
+        return False
+
+
+async def verify_has_sec_filings(ticker: str) -> bool:
+    """
+    Verify that a ticker actually has SEC filings (i.e., is a real public US company).
+    This prevents routing private companies or foreign stocks to EDGAR.
+    
+    Args:
+        ticker: Stock ticker symbol
+        
+    Returns:
+        True if company has SEC filings, False otherwise
+    """
+    try:
+        import httpx
+        
+        print(f"[EDGAR] 🔍 Verifying SEC filings for ticker: {ticker}")
+        
+        # Try to get company facts from SEC API
+        # First need to resolve ticker to CIK
+        cik_url = f"https://www.sec.gov/cgi-bin/browse-edgar"
+        params = {
+            'action': 'getcompany',
+            'ticker': ticker,
+            'count': 1,
+            'output': 'json'
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (compatible; CompanyResearch/1.0; +http://example.com)'
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            # Try to get CIK for this ticker
+            response = await client.get(cik_url, params=params, headers=headers, follow_redirects=True)
+            
+            # If we get a 404 or error, no SEC filings exist
+            if response.status_code == 404:
+                print(f"[EDGAR] ✗ No SEC filings found for {ticker} - likely not a US public company")
+                return False
+            
+            if response.status_code != 200:
+                print(f"[EDGAR] ⚠️  Could not verify SEC filings (status {response.status_code})")
+                # Be conservative - if we can't verify, assume it might be public
+                return True
+            
+            # Check if we got actual company data
+            try:
+                data = response.text
+                # Check for indicators that this is a real company with filings
+                if 'No matching' in data or 'No companies' in data or len(data) < 100:
+                    print(f"[EDGAR] ✗ No SEC filings found for {ticker}")
+                    return False
+                
+                print(f"[EDGAR] ✓ Confirmed SEC filings exist for {ticker}")
+                return True
+                
+            except Exception:
+                # If we can't parse, assume it might be valid
+                return True
+            
+    except Exception as e:
+        print(f"[EDGAR] ⚠️  SEC filing verification failed: {e}")
+        # On error, be conservative and assume might be public
+        return True
+
+
+
+def strip_ansi_codes(text: str) -> str:
+    """
+    Remove ANSI escape codes (colors, formatting) from text.
+    Makes the output cleaner for JSON storage and display.
+    """
+    if not text:
+        return text
+    # Remove ANSI escape sequences (colors, bold, etc.)
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', text)
+
+
+def format_financials_for_frontend(statement_data: dict, periods: list) -> list:
+    """
+    Convert financial statement data into frontend-friendly format.
+    
+    Args:
+        statement_data: Dictionary with metric labels as keys and their data as values
+        periods: List of period labels (e.g., ['FY 2024', 'FY 2023', ...])
+    
+    Returns:
+        List of dictionaries, each containing a metric and its values across periods
+        Example: [{"metric": "Total Revenue", "2024": 637959000000, "2023": 574785000000, ...}]
+    """
+    if not statement_data or not periods:
+        return []
+    
+    formatted_financials = []
+    
+    for label, item_data in statement_data.items():
+        values = item_data.get('values', {})
+        if not values:
+            continue
+        
+        # Create the metric row
+        metric_row = {"metric": label}
+        
+        # Add values for each period (extract year from "FY 2024" -> "2024")
+        for period in periods:
+            year = period.replace('FY ', '').strip()
+            if period in values:
+                metric_row[year] = values[period]
+        
+        formatted_financials.append(metric_row)
+    
+    return formatted_financials
+
+
 try:
     from edgar import Company, set_identity
     print("[EDGAR] Successfully imported edgartools")
@@ -36,30 +251,50 @@ logger = logging.getLogger(__name__)
 async def resolve_company_ticker(company_name: str) -> dict | None:
     """
     Resolve a company name to its ticker symbol using multiple strategies.
+    Includes domain verification and private unicorn detection.
     
     Args:
         company_name: Company name (e.g., "Apple", "Microsoft Corporation")
         
     Returns:
-        Dictionary with ticker and metadata:
-        {
-            "ticker": "AAPL",
-            "company_name": "Apple Inc.",
-            "exchange": "NASDAQ",
-            "method": "yahoo_finance" | "csv_lookup" | "edgar_search"
-        }
+        Dictionary with ticker and metadata, or None if private unicorn
     """
     print(f"[EDGAR] Resolving ticker for: {company_name}")
+    
+    # GUARD 1: Check if this is a known private unicorn
+    unicorn_info = is_private_unicorn(company_name)
+    if unicorn_info:
+        # Return special marker to indicate this is private
+        return {
+            'ticker': None,
+            'company_name': unicorn_info['name'],
+            'is_private_unicorn': True,
+            'domain': unicorn_info['domain'],
+            'valuation': unicorn_info['valuation'],
+            'method': 'private_unicorn_allowlist'
+        }
     
     # Strategy 1: Try CSV lookup first (fastest)
     ticker_info = await _lookup_ticker_from_csv(company_name)
     if ticker_info:
+        # Verify this ticker actually has SEC filings
+        has_filings = await verify_has_sec_filings(ticker_info['ticker'])
+        if not has_filings:
+            print(f"[EDGAR] ✗ Rejecting CSV match - no SEC filings (likely private/foreign)")
+            return None
+        
         print(f"[EDGAR] ✓ Found via CSV: {ticker_info['ticker']}")
         return ticker_info
     
     # Strategy 2: Try Yahoo Finance search (most reliable)
     ticker_info = await _search_yahoo_finance(company_name)
     if ticker_info:
+        # Verify this ticker actually has SEC filings
+        has_filings = await verify_has_sec_filings(ticker_info['ticker'])
+        if not has_filings:
+            print(f"[EDGAR] ✗ Rejecting Yahoo match - no SEC filings (likely private/foreign)")
+            return None
+        
         print(f"[EDGAR] ✓ Found via Yahoo Finance: {ticker_info['ticker']}")
         return ticker_info
     
@@ -262,12 +497,13 @@ async def get_company_financials_by_name(company_name: str) -> dict | None:
     """
     Fetch comprehensive financial data from SEC EDGAR using company name.
     Automatically resolves the company name to a ticker symbol.
+    Handles private unicorns by returning minimal data structure.
     
     Args:
         company_name: Company name (e.g., "Apple", "Microsoft Corporation")
         
     Returns:
-        Dictionary containing comprehensive company data (same as get_company_financials)
+        Dictionary containing comprehensive company data or private company marker
     """
     print(f"[EDGAR] Fetching financials for company: {company_name}")
     
@@ -280,6 +516,26 @@ async def get_company_financials_by_name(company_name: str) -> dict | None:
             'error': 'Company ticker not found',
             'company_name': company_name,
             'suggestion': 'Try using the exact company name or ticker symbol'
+        }
+    
+    # Check if this is a private unicorn
+    if ticker_info.get('is_private_unicorn'):
+        print(f"[EDGAR] 🦄 Private unicorn detected: {ticker_info['company_name']}")
+        print(f"[EDGAR] ℹ️  Returning minimal structure - AI will enrich")
+        return {
+            'name': ticker_info['company_name'],
+            'ticker': None,
+            'is_private': True,
+            'website': f"https://{ticker_info['domain']}",
+            'estimated_valuation': ticker_info['valuation'],
+            'source': 'private_unicorn_allowlist',
+            'note': 'This is a private company. Financial data from SEC filings not available.',
+            # Empty structures for AI to fill
+            'income_statement': [],
+            'balance_sheet': [],
+            'cash_flow': [],
+            'latest_filings': [],
+            'insiders': []
         }
     
     ticker = ticker_info['ticker']
@@ -333,11 +589,12 @@ async def get_company_financials(ticker: str) -> dict | None:
             "shares_outstanding": None,
             "public_float": None,
             "has_facts": False,
-            "income_statement_md": None,
-            "balance_sheet_md": None,
-            "cash_flow_md": None,
+            "income_statement": [],
+            "balance_sheet": [],
+            "cash_flow": [],
             "key_metrics": {},
-            "latest_filings": []
+            "latest_filings": [],
+            "insiders": []
         }
         
         # Get CIK
@@ -393,22 +650,27 @@ async def get_company_financials(ticker: str) -> dict | None:
                 if income_stmt:
                     print(f"[EDGAR] ✓ Income statement retrieved - {len(income_stmt.periods)} periods")
                     llm_context = income_stmt.to_llm_context(include_metadata=True)
-                    company_info["income_statement_md"] = str(income_stmt)[:50000]
                     
-                    company_info["income_statement_data"] = {}
+                    # Build temporary data structure for formatting
+                    temp_data = {}
                     for item in income_stmt.iter_with_values():
-                        company_info["income_statement_data"][item.label] = {
+                        temp_data[item.label] = {
                             'concept': item.concept,
                             'values': item.values,
                             'is_total': getattr(item, 'is_total', False)
                         }
                     
-                    company_info["income_periods"] = income_stmt.periods
+                    # Format for frontend consumption (no duplicate data stored)
+                    company_info["income_statement"] = format_financials_for_frontend(
+                        temp_data,
+                        income_stmt.periods
+                    )
+                    
                     company_info["key_metrics"].update({
                         "income_statement_periods": len(income_stmt.periods),
                         **llm_context.get('key_metrics', {})
                     })
-                    print(f"[EDGAR] Income statement: {len(income_stmt.periods)} periods, {len(company_info['income_statement_data'])} line items")
+                    print(f"[EDGAR] Income statement: {len(income_stmt.periods)} periods, {len(temp_data)} line items")
             except Exception as e:
                 print(f"[EDGAR] Error getting income statement: {e}")
             
@@ -418,22 +680,27 @@ async def get_company_financials(ticker: str) -> dict | None:
                 if balance_sheet:
                     print(f"[EDGAR] ✓ Balance sheet retrieved - {len(balance_sheet.periods)} periods")
                     bs_context = balance_sheet.to_llm_context(include_metadata=True)
-                    company_info["balance_sheet_md"] = str(balance_sheet)[:50000]
                     
-                    company_info["balance_sheet_data"] = {}
+                    # Build temporary data structure for formatting
+                    temp_data = {}
                     for item in balance_sheet.iter_with_values():
-                        company_info["balance_sheet_data"][item.label] = {
+                        temp_data[item.label] = {
                             'concept': item.concept,
                             'values': item.values,
                             'is_total': getattr(item, 'is_total', False)
                         }
                     
-                    company_info["balance_periods"] = balance_sheet.periods
+                    # Format for frontend consumption (no duplicate data stored)
+                    company_info["balance_sheet"] = format_financials_for_frontend(
+                        temp_data,
+                        balance_sheet.periods
+                    )
+                    
                     company_info["key_metrics"].update({
                         "balance_sheet_periods": len(balance_sheet.periods),
                         **{f"bs_{k}": v for k, v in bs_context.get('key_metrics', {}).items()}
                     })
-                    print(f"[EDGAR] Balance sheet: {len(balance_sheet.periods)} periods, {len(company_info['balance_sheet_data'])} line items")
+                    print(f"[EDGAR] Balance sheet: {len(balance_sheet.periods)} periods, {len(temp_data)} line items")
             except Exception as e:
                 print(f"[EDGAR] Error getting balance sheet: {e}")
             
@@ -443,70 +710,100 @@ async def get_company_financials(ticker: str) -> dict | None:
                 if cash_flow:
                     print(f"[EDGAR] ✓ Cash flow statement retrieved - {len(cash_flow.periods)} periods")
                     cf_context = cash_flow.to_llm_context(include_metadata=True)
-                    company_info["cash_flow_md"] = str(cash_flow)[:50000]
                     
-                    company_info["cash_flow_data"] = {}
+                    # Build temporary data structure for formatting
+                    temp_data = {}
                     for item in cash_flow.iter_with_values():
-                        company_info["cash_flow_data"][item.label] = {
+                        temp_data[item.label] = {
                             'concept': item.concept,
                             'values': item.values,
                             'is_total': getattr(item, 'is_total', False)
                         }
                     
-                    company_info["cashflow_periods"] = cash_flow.periods
+                    # Format for frontend consumption (no duplicate data stored)
+                    company_info["cash_flow"] = format_financials_for_frontend(
+                        temp_data,
+                        cash_flow.periods
+                    )
+                    
                     company_info["key_metrics"].update({
                         "cash_flow_periods": len(cash_flow.periods),
                         **{f"cf_{k}": v for k, v in cf_context.get('key_metrics', {}).items()}
                     })
-                    print(f"[EDGAR] Cash flow: {len(cash_flow.periods)} periods, {len(company_info['cash_flow_data'])} line items")
+                    print(f"[EDGAR] Cash flow: {len(cash_flow.periods)} periods, {len(temp_data)} line items")
             except Exception as e:
                 print(f"[EDGAR] Error getting cash flow: {e}")
         else:
             print("[EDGAR] ⚠️  No Facts API data available for this company")
         
-        # Fetch latest filings
-        print("[EDGAR] Fetching recent filings...")
+        # Fetch latest filings with comprehensive metadata
+        print("[EDGAR] Fetching recent filings with exhibits and metadata...")
         try:
             filings = company.get_filings(form=['10-K', '10-Q', '8-K'])
             
             if filings is not None:
+                
                 filing_count = 0
                 for filing in filings:
                     if filing_count >= 5:
                         break
                     
                     try:
-                        form = filing.form
-                        filing_date = str(filing.filing_date)
-                        accession = filing.accession_no
-                        filing_url = filing.homepage_url
-                        
-                        filing_content = None
-                        try:
-                            filing_content = filing.text()
-                            if filing_content:
-                                MAX_CONTENT_SIZE = 100000
-                                if len(filing_content) > MAX_CONTENT_SIZE:
-                                    filing_content = filing_content[:MAX_CONTENT_SIZE] + "\n\n... (content truncated)"
-                        except:
-                            pass
-                        
+                        # Basic filing information
                         filing_data = {
-                            "form": form,
-                            "filing_date": filing_date,
-                            "accession_number": accession,
-                            "url": filing_url,
-                            "content": filing_content,
-                            "is_xbrl": getattr(filing, 'is_xbrl', False),
-                            "primary_document": getattr(filing, 'primary_document', None),
+                            "form": filing.form,
+                            "filing_date": str(filing.filing_date),
                             "report_date": str(filing.report_date) if hasattr(filing, 'report_date') and filing.report_date else None,
-                            "size": getattr(filing, 'size', None),
+                            "accession_number": filing.accession_no,
+                            
+                            # URLs
+                            "url": filing.homepage_url,
+                            "text_url": getattr(filing, 'text_url', None),
+                            
+                            # Documents
+                            "primary_document": getattr(filing, 'primary_document', None),
+                            
+                            # SEC Metadata
+                            "acceptance_datetime": str(filing.acceptance_datetime) if hasattr(filing, 'acceptance_datetime') and filing.acceptance_datetime else None,
+                            "file_number": getattr(filing, 'file_number', None),
+                            "film_number": getattr(filing, 'film_number', None),
+                            
+                            # 8-K specific items (why the filing was submitted)
+                            "items": getattr(filing, 'items', None),
+                            
+                            # Technical details
+                            "is_xbrl": getattr(filing, 'is_xbrl', False),
+                            
+                            # Exhibits and attachments
+                            "exhibits": [],
+                            "attachments": []
                         }
+                        
+                        # Extract exhibits/attachments if available
+                        try:
+                            if hasattr(filing, 'attachments') and filing.attachments:
+                                for doc in filing.attachments:
+                                    attachment_info = {
+                                        "description": getattr(doc, 'description', None),
+                                        "document": getattr(doc, 'document', None),
+                                        "url": getattr(doc, 'url', None) if hasattr(doc, 'url') else None
+                                    }
+                                    
+                                    # Categorize as exhibit or attachment based on description
+                                    desc = str(attachment_info.get('description', '')).upper()
+                                    
+                                    if 'EX-' in desc or 'EXHIBIT' in desc:
+                                        filing_data["exhibits"].append(attachment_info)
+                                    else:
+                                        filing_data["attachments"].append(attachment_info)
+                        except Exception as attach_error:
+                            print(f"[EDGAR] Warning: Could not extract attachments for {filing.form}: {attach_error}")
                         
                         company_info["latest_filings"].append(filing_data)
                         filing_count += 1
                         
                     except Exception as e:
+                        print(f"[EDGAR] Error processing filing: {e}")
                         continue
             
             print(f"[EDGAR] Total filings retrieved: {len(company_info['latest_filings'])}")
@@ -514,6 +811,16 @@ async def get_company_financials(ticker: str) -> dict | None:
         except Exception as e:
             print(f"[EDGAR] Error fetching filings: {e}")
             company_info["latest_filings"] = []
+        
+        # Fetch insiders data (Form 4 filings from last 6 months)
+        print("[EDGAR] Fetching company insiders...")
+        try:
+            insiders_result = await get_company_insiders(ticker)
+            company_info["insiders"] = insiders_result if insiders_result else []
+            print(f"[EDGAR] Found {len(company_info['insiders'])} unique insiders")
+        except Exception as e:
+            print(f"[EDGAR] Error fetching insiders: {e}")
+            company_info["insiders"] = []
             
         return company_info
         

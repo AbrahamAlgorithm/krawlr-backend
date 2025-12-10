@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - EDGAR_IDENTITY=${EDGAR_IDENTITY}
+      - PUBSUB_SCRAPE_JOBS_TOPIC=scrape-jobs
+      - PUBSUB_SCRAPE_COMPLETED_TOPIC=scrape-completed
+      - PUBSUB_SCRAPE_PROGRESS_TOPIC=scrape-progress
+    volumes:
+      - ./credentials.json:/app/credentials.json:ro
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Scrape Workers (scale with --scale worker=N)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python worker.py
+    environment:
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - EDGAR_IDENTITY=${EDGAR_IDENTITY}
+      - PUBSUB_SCRAPE_JOBS_TOPIC=scrape-jobs
+      - PUBSUB_SCRAPE_COMPLETED_TOPIC=scrape-completed
+      - PUBSUB_SCRAPE_PROGRESS_TOPIC=scrape-progress
+    volumes:
+      - ./credentials.json:/app/credentials.json:ro
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 3  # Start with 3 workers
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  # Webhook Notification Service
+  webhook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python webhook_service.py
+    environment:
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+      - PUBSUB_SCRAPE_COMPLETED_TOPIC=scrape-completed
+    volumes:
+      - ./credentials.json:/app/credentials.json:ro
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+networks:
+  default:
+    name: krawlr-network

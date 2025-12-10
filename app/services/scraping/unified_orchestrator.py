@@ -10,8 +10,17 @@ from a single website URL. It handles:
 - Error handling and graceful degradation
 - Security validation
 
-Author: Krawlr Backend Team
-Date: December 2025
+IMPORTANT - AI Enrichment Architecture:
+- AI enrichment is handled WITHIN individual scrapers (e.g., funding_scraper.py)
+- The orchestrator does NOT apply AI enrichment at the merge level
+- This prevents AI hallucinations from overwriting accurate scraped data
+- Merge logic ALWAYS prioritizes scraped data over AI-generated data
+- AI only fills gaps where scraping returned null/empty values
+
+Data Priority Rules:
+1. Hard-scraped data (from APIs, web scraping) = HIGHEST PRIORITY
+2. AI enrichment within scrapers (fills gaps only) = MEDIUM PRIORITY  
+3. AI enrichment at orchestrator level = REMOVED (caused hallucinations)
 """
 
 import asyncio
@@ -22,6 +31,9 @@ from datetime import datetime, timezone
 import logging
 from concurrent.futures import ThreadPoolExecutor
 import uuid
+import os
+import json
+from openai import AsyncOpenAI
 
 # Import all scrapers
 from app.services.scraping.financial import get_unified_funding_data
@@ -34,6 +46,15 @@ from app.services.scraping.founders import scrape_founders
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Configure OpenAI for data enrichment
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+openai_client = None
+if OPENAI_API_KEY:
+    openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+else:
+    logger.warning("OPENAI_API_KEY not found - AI enrichment will be disabled")
 
 
 class SecurityValidator:
@@ -387,31 +408,20 @@ class UnifiedOrchestrator:
             scraper_results
         )
         
-        # 5. AI ENRICHMENT (Clean and fill missing data)
-        logger.info(f"[{scrape_id}] Starting AI enrichment...")
-        try:
-            from app.services.scraping.ai_enrichment import enrich_company_data
-            unified_data = await enrich_company_data(unified_data)
-        except Exception as e:
-            logger.warning(f"[{scrape_id}] AI enrichment failed: {e}. Continuing with raw data.")
-        
-        # 6. CALCULATE QUALITY SCORE
+        # 5. CALCULATE QUALITY SCORE
+        # Note: AI enrichment is now handled within individual scrapers (e.g., funding_scraper)
+        # to prevent hallucinations and ensure scraped data always takes priority
         quality_score = self.scorer.calculate_overall_score(unified_data)
         
-        # 7. ADD METADATA
+        # 6. AI ENRICHMENT FOR INCOMPLETE DATA
+        # Fill missing fields with AI-researched data
+        logger.info(f"[{scrape_id}] Enriching incomplete data with AI...")
+        unified_data = await self._enrich_incomplete_data(unified_data, company_name)
+        
+        # 7. REMOVE METADATA FROM FINAL OUTPUT (user requested)
+        # We'll add it temporarily for logging but remove before returning
         end_time = datetime.now(timezone.utc)
         duration = (end_time - start_time).total_seconds()
-        
-        unified_data['metadata'] = {
-            'scrape_id': scrape_id,
-            'user_id': user_id,
-            'scrape_timestamp': end_time.isoformat(),
-            'scrape_duration_seconds': round(duration, 2),
-            'data_quality_score': quality_score,
-            'ai_enriched': True,  # Track that AI enrichment was applied
-            'scrapers_status': self._get_scrapers_status(scraper_results),
-            'refresh_recommended_date': self._get_refresh_date(end_time).isoformat()
-        }
         
         logger.info(
             f"[{scrape_id}] ✅ Complete! "
@@ -614,49 +624,69 @@ class UnifiedOrchestrator:
             'online_presence': {}
         }
         
-        # 1. COMPANY SECTION (from profile + website)
-        profile_data = scraper_results.get('profile', {}).get('data', {})
-        profile_identity = profile_data.get('identity', {})
-        profile_financials = profile_data.get('financials', {})
-        website_data = scraper_results.get('website', {}).get('data', {})
+        # 1. COMPANY SECTION (from financial + website)
+        financial_data = scraper_results.get('financial', {}).get('data') or {}
+        identity_data = financial_data.get('identity', {}) if financial_data else {}
+        website_data = scraper_results.get('website', {}).get('data') or {}
+        
+        # Prioritize user input name over EDGAR legal name
+        # EDGAR returns legal entity name (e.g., "Alphabet Inc."), but user input is the brand name (e.g., "Google")
+        display_name = company_name  # Use the name extracted from URL/user input as primary
+        legal_name = identity_data.get('name') if identity_data.get('name') != company_name else None
         
         unified['company'] = {
-            'name': profile_data.get('company_name') or company_name,
-            'legal_name': None,
-            'website': website_url,
+            'name': display_name,
+            'legal_name': legal_name,
+            'website': identity_data.get('website') or website_url,
             'domain': domain,
-            'description': profile_identity.get('description'),
+            'description': identity_data.get('description'),
             'tagline': None,
-            'logo_url': website_data.get('logo_url'),
-            'favicon_url': website_data.get('favicon_url'),
-            'founded_year': profile_identity.get('founded'),
-            'status': profile_identity.get('company_type'),
-            'industry': profile_identity.get('industry'),
+            'logo_url': website_data.get('logo_url') if website_data else None,
+            'favicon_url': website_data.get('favicon_url') if website_data else None,
+            'founded_year': identity_data.get('founded_year'),
+            'status': identity_data.get('status'),
+            'industry': identity_data.get('industry'),
             'sector': None,
-            'employee_count': profile_financials.get('employees'),
-            'headquarters': profile_identity.get('headquarters')
+            'employee_count': identity_data.get('employees'),
+            'headquarters': identity_data.get('headquarters')
         }
         
         # 2. FINANCIALS SECTION (from financial scraper - EDGAR data)
-        financial_data = scraper_results.get('financial', {}).get('data', {})
-        edgar_raw = financial_data.get('raw_data', {}).get('edgar', {}) if financial_data else {}
+        financial_data = scraper_results.get('financial', {}).get('data') or {}
         financials_data = financial_data.get('financials', {}) if financial_data else {}
         identity_data = financial_data.get('identity', {}) if financial_data else {}
-        filings_data = financial_data.get('latest_filings', {}) if financial_data else {}
+        key_metrics = financial_data.get('key_metrics', {}) if financial_data else {}
         
-        # Build statements object if we have any financial data
+        # Get latest filings (array of filing objects)
+        latest_filings = financial_data.get('latest_filings', []) if financial_data else []
+        
+        # Get insiders (array of insider objects)
+        insiders = financial_data.get('insiders', []) if financial_data else []
+        
+        # Build statements object with detailed financial data
         statements = None
-        if any(financials_data.values()):
+        income_statement = financials_data.get('income_statement', [])
+        balance_sheet = financials_data.get('balance_sheet', [])
+        cash_flow_statement = financials_data.get('cash_flow_statement', [])
+        
+        if income_statement or balance_sheet or cash_flow_statement:
             statements = {
-                'income_statement': financials_data.get('revenue'),
-                'balance_sheet': financials_data.get('assets'),
-                'cash_flow': financials_data.get('cash_flow'),
-                'key_metrics': {
+                'income_statement': income_statement,
+                'balance_sheet': balance_sheet,
+                'cash_flow_statement': cash_flow_statement,
+                'fiscal_year': financials_data.get('fiscal_year')
+            }
+        elif any([financials_data.get('revenue'), financials_data.get('net_income')]):
+            # Fallback to summary data if no detailed statements
+            statements = {
+                'summary': {
                     'revenue': financials_data.get('revenue'),
                     'net_income': financials_data.get('net_income'),
                     'assets': financials_data.get('assets'),
                     'liabilities': financials_data.get('liabilities'),
-                    'equity': financials_data.get('equity')
+                    'equity': financials_data.get('equity'),
+                    'cash_flow': financials_data.get('cash_flow'),
+                    'fiscal_year': financials_data.get('fiscal_year')
                 }
             }
         
@@ -664,17 +694,23 @@ class UnifiedOrchestrator:
             'public_company': bool(identity_data.get('ticker')),
             'ticker': identity_data.get('ticker'),
             'exchange': None,
-            'cik': edgar_raw.get('cik') if edgar_raw else None,
+            'cik': None,
+            'sic': None,
+            'shares_outstanding': key_metrics.get('shares_outstanding'),
+            'public_float': key_metrics.get('public_float'),
             'statements': statements,
+            'latest_filings': latest_filings[:5],
+            'insiders': insiders,
             'valuation': None
         }
         
         # 3. FUNDING SECTION (from financial scraper - PitchBook + AI)
+        # CRITICAL: Always prefer scraped data over AI to prevent hallucinations
         funding_data = financial_data.get('funding', {}) if financial_data else {}
-        ai_enriched = financial_data.get('ai_enriched', {}) if financial_data else {}
         
         # total_raised can be a number or string like "$2.23B"
-        total_raised_value = ai_enriched.get('total_funding') or funding_data.get('total_raised')
+        # Scraped data takes priority - AI only fills gaps, never overwrites
+        total_raised_value = funding_data.get('total_raised')
         if isinstance(total_raised_value, (int, float)):
             total_raised = float(total_raised_value)
         else:
@@ -688,13 +724,44 @@ class UnifiedOrchestrator:
             'investors': funding_data.get('investors', [])
         }
         
-        # 4. PEOPLE SECTION (from leadership scraper)
-        leadership_data = scraper_results.get('leadership', {}).get('data', {})
+        # 4. PEOPLE SECTION (merge from leadership scraper + financial insiders)
+        leadership_data = scraper_results.get('leadership', {}).get('data') or {}
         
+        # Get insiders from financial data (SEC filings)
+        financial_insiders = financial_data.get('insiders', []) if financial_data else []
+        
+        # Separate insiders by role
+        executives_from_insiders = []
+        board_members_from_insiders = []
+        
+        for insider in financial_insiders:
+            position = insider.get('position', '').lower()
+            name = insider.get('insider')
+            
+            if not name:
+                continue
+            
+            person_data = {
+                'name': name,
+                'position': insider.get('position'),
+                'source': 'SEC Filings'
+            }
+            
+            # Categorize: Directors/Board members vs Executives
+            if any(keyword in position for keyword in ['director', 'board']):
+                board_members_from_insiders.append(person_data)
+            else:  # CEO, CFO, VP, President, etc.
+                executives_from_insiders.append(person_data)
+        
+        # Merge with leadership scraper data (leadership scraper takes priority if available)
+        leadership_executives = leadership_data.get('executives', [])
+        leadership_board = leadership_data.get('board_members', [])
+        
+        # Use leadership data if available, otherwise use insiders from financial data
         unified['people'] = {
             'founders': leadership_data.get('founders', []),
-            'executives': leadership_data.get('executives', []),
-            'board_members': leadership_data.get('board_members', []),
+            'executives': leadership_executives if leadership_executives else executives_from_insiders,
+            'board_members': leadership_board if leadership_board else board_members_from_insiders,
             'key_people': leadership_data.get('key_people', [])
         }
         
@@ -713,27 +780,45 @@ class UnifiedOrchestrator:
             for p in products
         ]
         
-        # 6. COMPETITORS SECTION (from AI-enriched financial data or competitors scraper)
-        competitors_data = scraper_results.get('competitors', {}).get('data', {})
-        market_data = financial_data.get('market', {}) if financial_data else {}
+        # 6. COMPETITORS SECTION (merge from financial scraper + competitors scraper)
+        # Financial scraper provides AI-enriched competitors from EDGAR/PitchBook analysis
+        # Competitors scraper provides web-scraped competitors
+        competitors_data = scraper_results.get('competitors', {}).get('data') or {}
         
-        # Prefer AI-enriched competitors from financial scraper (has more details)
-        ai_competitors = ai_enriched.get('competitors', [])
-        market_competitors = market_data.get('competitors', [])
-        raw_competitors = competitors_data.get('competitors', [])
+        financial_competitors = financial_data.get('competitors', []) if financial_data else []
+        scraper_competitors = competitors_data.get('competitors', [])
         
-        unified['competitors'] = ai_competitors if ai_competitors else (market_competitors if market_competitors else raw_competitors)
+        # Merge both sources, prioritizing financial scraper (more detailed)
+        # Remove duplicates by company name (case-insensitive)
+        merged_competitors = []
+        seen_names = set()
+        
+        # Add financial competitors first (higher quality, AI-enriched)
+        for comp in financial_competitors:
+            name_lower = comp.get('name', '').lower()
+            if name_lower and name_lower not in seen_names:
+                merged_competitors.append(comp)
+                seen_names.add(name_lower)
+        
+        # Add scraper competitors if not already present
+        for comp in scraper_competitors:
+            name_lower = comp.get('name', '').lower()
+            if name_lower and name_lower not in seen_names:
+                merged_competitors.append(comp)
+                seen_names.add(name_lower)
+        
+        unified['competitors'] = merged_competitors
         
         # 7. NEWS SECTION (from news scraper)
-        news_data = scraper_results.get('news', {}).get('data', {})
+        news_data = scraper_results.get('news', {}).get('data') or {}
         
         unified['news'] = {
-            'total': len(news_data.get('articles', [])),
+            'total': len(news_data.get('articles', [])) if news_data else 0,
             'date_range': {
-                'oldest': news_data.get('date_range', {}).get('oldest'),
-                'newest': news_data.get('date_range', {}).get('newest')
+                'oldest': (news_data.get('date_range') or {}).get('oldest') if news_data else None,
+                'newest': (news_data.get('date_range') or {}).get('newest') if news_data else None
             },
-            'articles': news_data.get('articles', [])[:20]  # Top 20
+            'articles': news_data.get('articles', [])[:20] if news_data else []  # Top 20
         }
         
         # 8. ONLINE PRESENCE SECTION (from website scraper)
@@ -771,6 +856,211 @@ class UnifiedOrchestrator:
         """
         from datetime import timedelta
         return current_time + timedelta(days=7)
+    
+    async def _enrich_incomplete_data(self, unified_data: Dict[str, Any], company_name: str) -> Dict[str, Any]:
+        """
+        Use AI to enrich incomplete data fields with valid, researched information.
+        
+        Enriches:
+        - Null fields in identity (website, description, industry, founded_year, employees)
+        - Null fields in financials (assets, liabilities, equity)
+        - Incomplete funding rounds (missing amounts, dates, valuations)
+        - Empty products list
+        - Missing people (founders, executives from financial data)
+        - Empty social media links
+        - Missing contact information
+        - Empty competitors list
+        """
+        if not openai_client:
+            logger.warning("OpenAI not configured, skipping data enrichment")
+            return unified_data
+        
+        try:
+            # Get the actual company name from unified_data (this is the user's input name like "Google")
+            # NOT the legal name from EDGAR (like "Alphabet Inc.")
+            actual_company_name = unified_data.get('company', {}).get('name', company_name)
+            
+            # Identify what needs enrichment
+            needs_enrichment = False
+            identity = unified_data.get('company', {})
+            financials = unified_data.get('financials', {})
+            
+            # Check for null/empty fields
+            null_identity_fields = [k for k, v in identity.items() if v is None and k not in ['ticker', 'headquarters', 'legal_name']]
+            null_financial_fields = [k for k, v in financials.items() if v is None and k in ['assets', 'liabilities', 'equity']]
+            products_list = unified_data.get('products', [])
+            empty_products = not products_list or len(products_list) == 0
+            competitors_list = unified_data.get('competitors', [])
+            empty_competitors = not competitors_list or len(competitors_list) == 0
+            empty_social = not unified_data.get('online_presence', {}).get('social_media')
+            
+            if null_identity_fields or null_financial_fields or empty_products or empty_competitors or empty_social:
+                needs_enrichment = True
+            
+            if not needs_enrichment:
+                logger.info("[AI] No null/empty fields to enrich, skipping AI call")
+                return unified_data
+            
+            # Build enrichment prompt using the actual company name (user's input like "Google")
+            # NOT the legal entity name from EDGAR (like "Alphabet Inc.")
+            prompt = f"""You are a product research analyst and company intelligence expert. Fill ONLY the NULL/EMPTY fields with REAL, FACTUAL data.
+
+Company: {actual_company_name}
+Ticker: {identity.get('ticker', 'N/A')}
+Website: {identity.get('website') or 'N/A'}
+
+FIELDS TO FILL (ONLY if currently null/empty):
+
+1. IDENTITY (company section):
+   - website: {identity.get('website')}
+   - description: {identity.get('description')} 
+     **IMPORTANT**: If description is null, write a detailed, expert-level description as a product manager would.
+     The description MUST be about "{actual_company_name}" (the brand/product name), NOT the legal entity name.
+     Format: "{actual_company_name} is a [company type] that [what they do]. The company [key offerings/services]. 
+     Known for [unique value proposition], {actual_company_name} serves [target market] through [how they deliver value].
+     Their platform/products include [main products]. [Additional strategic context]."
+     Example: "Google is a multinational technology company that specializes in internet-related services and products. 
+     The company offers search engine technology, online advertising, cloud computing, software, and hardware. 
+     Known for its dominant search engine and advertising platforms, Google serves billions of users worldwide through 
+     innovative products like Google Search, YouTube, Android, Chrome, and Google Cloud. The company generates revenue 
+     primarily through advertising on its search and video platforms while expanding into enterprise cloud services and 
+     consumer hardware."
+   - industry: {identity.get('industry')}
+   - founded_year: {identity.get('founded_year')}
+   - employees: {identity.get('employees')}
+
+2. FINANCIALS (only if null):
+   - assets: {financials.get('assets')}
+   - liabilities: {financials.get('liabilities')}
+   - equity: {financials.get('equity')}
+
+3. PRODUCTS: {len(products_list)} products found
+   **REQUIRED**: If products list is empty, research and list the company's main products/services (3-7 products minimum).
+   Include product name, category, and detailed description for each.
+
+4. COMPETITORS: {len(competitors_list)} competitors found
+   **REQUIRED**: If competitors list is empty, research and list top 5-7 direct competitors.
+
+5. SOCIAL MEDIA: {len(unified_data.get('online_presence', {}).get('social_media', {}))} links found
+
+CRITICAL RULES:
+- Use ONLY real, factual data from reliable sources
+- For description: Write a comprehensive, professional description (150-250 words) that explains the company's business model, products, market position, and revenue streams like an expert product manager would
+- For financials: Use latest available data (millions/billions format)
+- **For products: ALWAYS generate 3-7 main products/services if the list is empty. Research the company's actual product offerings.**
+- **For competitors: ALWAYS generate 5-7 direct competitors if the list is empty.**
+- For social media: Official company accounts only (LinkedIn, Twitter, Facebook, Instagram, YouTube)
+- If you cannot find valid data for identity/financial fields, return null for that field
+
+OUTPUT FORMAT (JSON only, include ONLY non-null values):
+{{
+  "identity_enrichment": {{
+    "website": "https://...",
+    "description": "Detailed product manager-style company description...",
+    "industry": "Industry name",
+    "founded_year": 2023,
+    "employees": "50,000"
+  }},
+  "financial_enrichment": {{
+    "assets": 500000000000.0,
+    "liabilities": 100000000000.0,
+    "equity": 400000000000.0
+  }},
+  "products": [
+    {{
+      "name": "Product Name",
+      "category": "Category",
+      "description": "Detailed description of what it does and who it serves"
+    }}
+  ],
+  "competitors": [
+    {{
+      "name": "Competitor Name",
+      "website": "https://...",
+      "description": "Brief description"
+    }}
+  ],
+  "social_media": {{
+    "linkedin": "https://linkedin.com/company/...",
+    "twitter": "https://twitter.com/...",
+    "facebook": "https://facebook.com/...",
+    "instagram": "https://instagram.com/..."
+  }}
+}}
+
+RESPOND WITH ONLY VALID JSON. No markdown, no explanation."""
+
+            logger.info("[AI] Enriching null/empty fields...")
+            response = await openai_client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": "You are a company research assistant. Return ONLY valid JSON with factual company data."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.1,
+                max_tokens=8192,
+                response_format={"type": "json_object"}
+            )
+            
+            # Parse AI response
+            ai_text = response.choices[0].message.content.strip()
+            
+            # Remove markdown code blocks if present
+            if ai_text.startswith("```json"):
+                ai_text = ai_text[7:]
+            if ai_text.startswith("```"):
+                ai_text = ai_text[3:]
+            if ai_text.endswith("```"):
+                ai_text = ai_text[:-3]
+            ai_text = ai_text.strip()
+            
+            enriched = json.loads(ai_text)
+            
+            # Apply enrichments
+            # 1. Fill null identity fields
+            if enriched.get('identity_enrichment'):
+                identity_data = enriched['identity_enrichment']
+                for key, value in identity_data.items():
+                    if unified_data['company'].get(key) is None and value is not None:
+                        unified_data['company'][key] = value
+                        logger.info(f"[AI] ✓ Filled identity.{key}: {value}")
+            
+            # 2. Fill null financial fields
+            if enriched.get('financial_enrichment'):
+                financial_data = enriched['financial_enrichment']
+                for key, value in financial_data.items():
+                    if unified_data['financials'].get(key) is None and value is not None:
+                        unified_data['financials'][key] = value
+                        logger.info(f"[AI] ✓ Filled financials.{key}: {value}")
+            
+            # 3. Add products if empty
+            if enriched.get('products'):
+                # Only add if products list is actually empty
+                if not unified_data.get('products') or len(unified_data.get('products', [])) == 0:
+                    unified_data['products'] = enriched['products']
+                    logger.info(f"[AI] ✓ Added {len(enriched['products'])} products")
+            
+            # 4. Add competitors if empty
+            if enriched.get('competitors'):
+                # Only add if competitors list is actually empty
+                if not unified_data.get('competitors') or len(unified_data.get('competitors', [])) == 0:
+                    unified_data['competitors'] = enriched['competitors']
+                    logger.info(f"[AI] ✓ Added {len(enriched['competitors'])} competitors")
+            
+            # 5. Add social media if empty
+            if enriched.get('social_media') and not unified_data.get('online_presence', {}).get('social_media'):
+                unified_data['online_presence']['social_media'] = enriched['social_media']
+                logger.info("[AI] ✓ Added social media links")
+            
+            logger.info("[AI] ✅ Data enrichment completed")
+            
+        except json.JSONDecodeError as e:
+            logger.warning(f"[AI] Failed to parse enrichment response: {e}")
+            logger.warning(f"[AI] Response was: {ai_text[:500]}...")
+        except Exception as e:
+            logger.error(f"[AI] Enrichment error: {e}")
+        
+        return unified_data
 
 
 # Public API

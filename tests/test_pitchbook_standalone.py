@@ -77,25 +77,28 @@ async def test_pitchbook_scraper(company_name: str):
     print(f"   - Industry: {result.get('industry', 'N/A')}")
     print(f"   - Headquarters: {result.get('headquarters', 'N/A')}")
     print(f"   - Founded: {result.get('founded_year', 'N/A')}")
+    print(f"   - Status: {result.get('status', 'N/A')}")
     print(f"   - Employees: {result.get('employees', 'N/A')}")
     print(f"   - Revenue: {result.get('revenue', 'N/A')}")
     
     # Funding information
-    total_funding = result.get('total_funding')
+    total_raised = result.get('total_raised')
+    latest_deal = result.get('latest_deal_type')
     funding_rounds = result.get('funding_rounds', [])
     
     print(f"\n💰 Funding Information:")
-    print(f"   - Total Funding: {total_funding if total_funding else 'N/A'}")
+    print(f"   - Total Raised: {total_raised if total_raised else 'N/A'}")
+    print(f"   - Latest Deal: {latest_deal if latest_deal else 'N/A'}")
     print(f"   - Funding Rounds: {len(funding_rounds)}")
     
     if funding_rounds:
-        print(f"\n   Recent Funding Rounds:")
+        print(f"\n   Funding Rounds Details:")
         for i, round_data in enumerate(funding_rounds[:5], 1):
-            print(f"   {i}. {round_data.get('round_type', 'N/A')} - {round_data.get('date', 'N/A')}")
-            if round_data.get('amount'):
-                print(f"      Amount: {round_data['amount']}")
-            if round_data.get('investors'):
-                print(f"      Investors: {round_data['investors'][:100]}...")
+            print(f"   {i}. Deal Type: {round_data.get('deal_type', 'N/A')}")
+            print(f"      Date: {round_data.get('date', 'N/A')}")
+            print(f"      Amount: {round_data.get('amount', 'N/A')}")
+            print(f"      Raised to Date: {round_data.get('raised_to_date', 'N/A')}")
+            print(f"      Post-Val: {round_data.get('post_val', 'N/A')}")
     
     # Investors
     investors = result.get('investors', [])
@@ -106,24 +109,15 @@ async def test_pitchbook_scraper(company_name: str):
         if len(investors) > 10:
             print(f"   ... and {len(investors) - 10} more")
     
-    # Executives and founders
-    executives = result.get('executives', [])
-    founders = result.get('founders', [])
+    # Competitors
+    competitors = result.get('competitors', [])
     
-    print(f"\n👥 Leadership:")
-    print(f"   - Founders: {len(founders)}")
-    if founders:
-        for founder in founders:
-            print(f"      • {founder}")
-    
-    print(f"   - Executives: {len(executives)}")
-    if executives:
-        for exec_data in executives[:5]:
-            name = exec_data.get('name', 'N/A')
-            title = exec_data.get('title', 'N/A')
-            print(f"      • {name} - {title}")
-        if len(executives) > 5:
-            print(f"      ... and {len(executives) - 5} more")
+    print(f"\n🏆 Competitors: {len(competitors)}")
+    if competitors:
+        for i, competitor in enumerate(competitors[:10], 1):
+            print(f"   {i}. {competitor}")
+        if len(competitors) > 10:
+            print(f"   ... and {len(competitors) - 10} more")
     
     # Save detailed output
     safe_name = company_name.lower().replace(' ', '_')

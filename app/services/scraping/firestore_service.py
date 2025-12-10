@@ -1,5 +1,5 @@
 from app.core.database import db
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional, List
 import uuid
 from google.cloud import firestore
@@ -11,7 +11,7 @@ class FirestoreService:
     
     def __init__(self):
         self.db = db
-        self.jobs_collection = 'scraping_jobs'
+        self.jobs_collection = 'scrape_jobs'  # Must match job_queue collection
         self.companies_collection = 'companies'
     
     async def create_scraping_job(
@@ -40,8 +40,8 @@ class FirestoreService:
             'company_name': company_name,
             'status': 'pending',  # pending, processing, completed, failed
             'progress': 0,  # 0-100
-            'created_at': datetime.utcnow(),
-            'updated_at': datetime.utcnow(),
+            'created_at': datetime.now(timezone.utc),
+            'updated_at': datetime.now(timezone.utc),
             'result': None,
             'error': None
         }
@@ -63,7 +63,7 @@ class FirestoreService:
         
         update_data = {
             'status': status,
-            'updated_at': datetime.utcnow()
+            'updated_at': datetime.now(timezone.utc)
         }
         
         if progress is not None:
@@ -88,8 +88,8 @@ class FirestoreService:
             'status': 'completed',
             'progress': 100,
             'result': result,
-            'updated_at': datetime.utcnow(),
-            'completed_at': datetime.utcnow()
+            'updated_at': datetime.now(timezone.utc),
+            'completed_at': datetime.now(timezone.utc)
         })
         
         # Save to companies collection (keyed by domain)
@@ -100,7 +100,7 @@ class FirestoreService:
             company_ref.set({
                 'domain': domain,
                 'data': result,
-                'last_scraped': datetime.utcnow(),
+                'last_scraped': datetime.now(timezone.utc),
                 'scrape_count': firestore.Increment(1)
             }, merge=True)
             
@@ -145,8 +145,29 @@ class FirestoreService:
             return False
         
         # Check if scraped within specified hours
-        time_diff = datetime.utcnow() - last_scraped
+        if last_scraped.tzinfo is None:
+            last_scraped = last_scraped.replace(tzinfo=timezone.utc)
+        time_diff = datetime.now(timezone.utc) - last_scraped
         return time_diff.total_seconds() < (hours * 3600)
+    
+    async def save_company_data(self, domain: str, result: Dict):
+        """
+        Save company intelligence data to Firestore.
+        
+        Args:
+            domain: Company domain (e.g., 'walmart.com')
+            result: Complete company intelligence data
+        """
+        from datetime import timezone as tz
+        company_ref = self.db.collection(self.companies_collection).document(domain)
+        company_ref.set({
+            'domain': domain,
+            'data': result,
+            'last_scraped': datetime.now(tz.utc),
+            'scrape_count': firestore.Increment(1)
+        }, merge=True)
+        
+        print(f"💾 Saved company data for: {domain}")
     
     async def get_cached_company_data(self, domain: str, max_age_days: int = 7) -> Optional[Dict]:
         """
@@ -171,8 +192,14 @@ class FirestoreService:
         if not last_scraped:
             return None
         
+        # Ensure last_scraped is timezone-aware
+        if last_scraped.tzinfo is None:
+            from datetime import timezone as tz
+            last_scraped = last_scraped.replace(tzinfo=tz.utc)
+        
         # Check if cache is still fresh
-        time_diff = datetime.utcnow() - last_scraped
+        now = datetime.now(timezone.utc)
+        time_diff = now - last_scraped
         max_age_seconds = max_age_days * 24 * 3600
         
         if time_diff.total_seconds() > max_age_seconds:
@@ -234,7 +261,7 @@ class FirestoreService:
         try:
             # Try to read a document (creates it if doesn't exist)
             self.db.collection('_health_check').document('ping').set({
-                'timestamp': datetime.utcnow()
+                'timestamp': datetime.now(timezone.utc)
             })
             return True
         except Exception as e:

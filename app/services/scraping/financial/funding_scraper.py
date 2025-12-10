@@ -1,9 +1,11 @@
 """
-Unified funding scraper service that combines EDGAR and PitchBook data.
-Runs both scrapers in parallel and merges the results intelligently.
+Unified funding scraper service with smart routing.
 
-This service provides a single interface for fetching comprehensive company
-financial and funding data from multiple sources.
+Routing Logic:
+- Public companies → EDGAR (SEC filings)
+- Private companies → PitchBook (funding data)
+
+No merging - routes to the appropriate scraper based on company status.
 """
 
 from __future__ import annotations
@@ -15,34 +17,32 @@ import os
 from typing import Any
 from datetime import datetime
 
-import google.generativeai as genai
+from openai import AsyncOpenAI
 
-from .edgar_scraper import get_company_financials_by_name
+from .edgar_scraper import get_company_financials_by_name, is_private_unicorn
 from .pitchbook_scraper import get_company_data as get_pitchbook_data
 from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-# Configure Gemini AI
+# Configure OpenAI
 settings = get_settings()
-if settings.gemini_api_key:
-    genai.configure(api_key=settings.gemini_api_key)
-    
-    GEMINI_MODEL = genai.GenerativeModel('gemini-2.5-flash-lite')
+openai_client = None
+if settings.openai_api_key:
+    openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
 else:
-    GEMINI_MODEL = None
-    logger.warning("GEMINI_API_KEY not found. AI enrichment will be disabled.")
+    logger.warning("OPENAI_API_KEY not found. AI enrichment will be disabled.")
 
 
 async def get_unified_funding_data(company_name: str) -> dict[str, Any]:
     """
-    Get comprehensive funding data by running EDGAR and PitchBook scrapers in parallel.
+    Get comprehensive funding data using smart routing.
     
-    This function:
-    1. Runs both scrapers concurrently for speed
-    2. Handles failures gracefully (if one fails, uses the other)
-    3. Merges data intelligently, prioritizing more reliable sources
-    4. Returns a unified format combining the best of both
+    Routing Logic:
+    1. Check if company is private unicorn or public company
+    2. If private → Use PitchBook scraper
+    3. If public → Use EDGAR scraper
+    4. Enrich with AI for competitors and missing identity fields
     
     Args:
         company_name: Company name to search for
@@ -110,30 +110,55 @@ async def get_unified_funding_data(company_name: str) -> dict[str, Any]:
         }
     """
     print(f"\n{'='*70}")
-    print(f"🔄 UNIFIED FUNDING SCRAPER")
+    print(f"🔄 SMART ROUTING SCRAPER")
     print(f"{'='*70}")
     print(f"📊 Company: {company_name}")
-    print(f"🚀 Running EDGAR and PitchBook scrapers in parallel...")
     print(f"{'='*70}\n")
     
-    # Run both scrapers concurrently
-    edgar_task = asyncio.create_task(_run_edgar_scraper(company_name))
-    pitchbook_task = asyncio.create_task(_run_pitchbook_scraper(company_name))
+    # STEP 1: Determine if company is private or public
+    print(f"[ROUTER] 🔍 Determining company status...")
     
-    # Wait for both to complete
-    edgar_data, pitchbook_data = await asyncio.gather(edgar_task, pitchbook_task)
+    # Check if it's a known private unicorn
+    unicorn_info = is_private_unicorn(company_name)
     
-    # Merge and format the results
-    unified_data = _merge_funding_data(company_name, edgar_data, pitchbook_data)
+    if unicorn_info:
+        # PRIVATE COMPANY → Use PitchBook
+        print(f"[ROUTER] 🦄 Private unicorn detected: {unicorn_info['name']}")
+        print(f"[ROUTER] → Routing to PitchBook scraper\n")
+        
+        pitchbook_data = await _run_pitchbook_scraper(company_name)
+        unified_data = _format_pitchbook_data(company_name, pitchbook_data)
+        
+    else:
+        # Try to find public company ticker
+        print(f"[ROUTER] 🔍 Checking for public company ticker...")
+        from .edgar_scraper import resolve_company_ticker
+        ticker_info = await resolve_company_ticker(company_name)
+        
+        if ticker_info and ticker_info.get('ticker'):
+            # PUBLIC COMPANY → Use EDGAR
+            print(f"[ROUTER] 🏛️  Public company detected: {ticker_info['company_name']}")
+            print(f"[ROUTER] → Routing to EDGAR scraper\n")
+            
+            edgar_data = await _run_edgar_scraper(company_name)
+            unified_data = _format_edgar_data(company_name, edgar_data)
+            
+        else:
+            # No ticker found, likely PRIVATE → Use PitchBook
+            print(f"[ROUTER] 🔒 No public ticker found")
+            print(f"[ROUTER] → Routing to PitchBook scraper (likely private)\n")
+            
+            pitchbook_data = await _run_pitchbook_scraper(company_name)
+            unified_data = _format_pitchbook_data(company_name, pitchbook_data)
     
-    # Enrich with AI if available
-    if GEMINI_MODEL:
-        print(f"\n[AI] 🤖 Enriching data with Gemini AI...")
+    # STEP 2: Enrich with AI if available
+    if openai_client:
+        print(f"\n[AI] 🤖 Enriching data with OpenAI...")
         unified_data = await _enrich_with_ai(unified_data)
     else:
-        print(f"\n[AI] ⚠️  Gemini API key not configured. Skipping AI enrichment.")
+        print(f"\n[AI] ⚠️  OpenAI API key not configured. Skipping AI enrichment.")
     
-    # Print summary
+    # STEP 3: Print summary
     _print_summary(unified_data)
     
     return unified_data
@@ -177,59 +202,28 @@ async def _run_pitchbook_scraper(company_name: str) -> dict | None:
         return None
 
 
-def _merge_funding_data(
-    company_name: str,
-    edgar_data: dict | None,
-    pitchbook_data: dict | None
-) -> dict[str, Any]:
+def _format_edgar_data(company_name: str, edgar_data: dict | None) -> dict[str, Any]:
     """
-    Intelligently merge data from EDGAR and PitchBook.
-    
-    Priority rules:
-    - Ticker symbol: EDGAR (authoritative for public companies)
-    - Financial statements: EDGAR (more detailed and reliable)
-    - Funding rounds: PitchBook (specializes in this)
-    - Industry/Description: Prefer PitchBook (more detailed)
-    - Company status: PitchBook (tracks Private/Public/Acquired)
+    Format EDGAR data into unified structure.
+    For PUBLIC companies only.
     """
-    print(f"\n[MERGE] 🔀 Merging data from sources...")
+    print(f"\n[FORMAT] 📋 Formatting EDGAR data...")
     
-    sources_used = []
-    errors = []
+    if not edgar_data:
+        return _create_empty_structure(company_name)
     
-    if edgar_data:
-        sources_used.append("edgar")
-    else:
-        errors.append("EDGAR data unavailable")
-    
-    if pitchbook_data:
-        sources_used.append("pitchbook")
-    else:
-        errors.append("PitchBook data unavailable")
-    
-    # Determine data quality
-    if edgar_data and pitchbook_data:
-        data_quality = "excellent"
-    elif edgar_data or pitchbook_data:
-        data_quality = "good" if edgar_data else "partial"
-    else:
-        data_quality = "limited"
-    
-    # Initialize unified structure
     unified = {
         "company_name": company_name,
-        "sources_used": sources_used,
-        "data_quality": data_quality,
         
         "identity": {
-            "name": None,
-            "ticker": None,
-            "website": None,
+            "name": edgar_data.get("name") or company_name,
+            "ticker": edgar_data.get("ticker"),
+            "website": edgar_data.get("website"),
             "description": None,
             "industry": None,
-            "headquarters": None,
+            "headquarters": edgar_data.get("business_address"),
             "founded_year": None,
-            "status": None,
+            "status": "Public",  # EDGAR = Public companies
             "employees": None
         },
         
@@ -240,200 +234,284 @@ def _merge_funding_data(
             "liabilities": None,
             "equity": None,
             "cash_flow": None,
-            "source": None,
-            "fiscal_year": None
+            "fiscal_year": None,
+            "income_statement": edgar_data.get("income_statement", []),
+            "balance_sheet": edgar_data.get("balance_sheet", []),
+            "cash_flow_statement": edgar_data.get("cash_flow", [])
         },
         
+        "funding": {
+            "total_raised": None,  # Public companies don't have "raised" data
+            "latest_deal_type": "IPO" if edgar_data.get("ticker") else None,
+            "funding_rounds": [],
+            "investors": []
+        },
+        
+        "key_metrics": {
+            "shares_outstanding": edgar_data.get("shares_outstanding"),
+            "public_float": edgar_data.get("public_float")
+        },
+        
+        "latest_filings": edgar_data.get("latest_filings", [])[:5],
+        "insiders": edgar_data.get("insiders", []),
+        "products": [],
+        "competitors": [],
+        
+        "_internal": {
+            "data_source": "edgar",
+            "is_public": True,
+            "needs_ai_enrichment": True
+        }
+    }
+    
+    # Extract latest financial metrics
+    income_statement = edgar_data.get("income_statement", [])
+    balance_sheet = edgar_data.get("balance_sheet", [])
+    cash_flow = edgar_data.get("cash_flow", [])
+    
+    if income_statement and len(income_statement) > 0:
+        first_metric = income_statement[0] if income_statement else {}
+        years = [k for k in first_metric.keys() if k != "metric"]
+        if years:
+            latest_year = max(years)
+            unified["financials"]["fiscal_year"] = latest_year
+            
+            for item in income_statement:
+                metric = item.get("metric", "").lower()
+                value = item.get(latest_year)
+                if "revenue" in metric or "sales" in metric:
+                    unified["financials"]["revenue"] = value
+                elif "net income" in metric:
+                    unified["financials"]["net_income"] = value
+            
+            for item in cash_flow:
+                metric = item.get("metric", "").lower()
+                value = item.get(latest_year)
+                if "operating" in metric and "cash" in metric:
+                    unified["financials"]["cash_flow"] = value
+    
+    print(f"[FORMAT] ✓ EDGAR data formatted for public company")
+    return unified
+
+
+def _format_pitchbook_data(company_name: str, pitchbook_data: dict | None) -> dict[str, Any]:
+    """
+    Format PitchBook data into unified structure.
+    For PRIVATE companies only.
+    """
+    print(f"\n[FORMAT] 📋 Formatting PitchBook data...")
+    
+    if not pitchbook_data:
+        return _create_empty_structure(company_name)
+    
+    unified = {
+        "company_name": company_name,
+        
+        "identity": {
+            "name": pitchbook_data.get("company_name") or company_name,
+            "ticker": None,  # Private companies don't have tickers
+            "website": pitchbook_data.get("website"),
+            "description": pitchbook_data.get("description"),
+            "industry": pitchbook_data.get("industry"),
+            "headquarters": pitchbook_data.get("headquarters"),
+            "founded_year": pitchbook_data.get("founded_year"),
+            "status": pitchbook_data.get("status", "Private"),
+            "employees": pitchbook_data.get("employees")
+        },
+        
+        "financials": {
+            "revenue": None,  # PitchBook doesn't provide detailed financials
+            "net_income": None,
+            "assets": None,
+            "liabilities": None,
+            "equity": None,
+            "cash_flow": None,
+            "fiscal_year": None,
+            "income_statement": [],
+            "balance_sheet": [],
+            "cash_flow_statement": []
+        },
+        
+        "funding": {
+            "total_raised": pitchbook_data.get("total_raised"),
+            "latest_deal_type": pitchbook_data.get("latest_deal_type"),
+            "funding_rounds": pitchbook_data.get("funding_rounds", []),
+            "investors": pitchbook_data.get("investors", [])
+        },
+        
+        "key_metrics": {
+            "shares_outstanding": None,
+            "public_float": None
+        },
+        
+        "latest_filings": [],
+        "insiders": [],
+        "products": [],
+        "competitors": [{"name": comp} for comp in pitchbook_data.get("competitors", [])],
+        
+        "_internal": {
+            "data_source": "pitchbook",
+            "is_public": False,
+            "needs_ai_enrichment": True
+        }
+    }
+    
+    print(f"[FORMAT] ✓ PitchBook data formatted for private company")
+    return unified
+
+
+def _create_empty_structure(company_name: str) -> dict[str, Any]:
+    """Create empty unified structure when no data is available."""
+    return {
+        "company_name": company_name,
+        "identity": {
+            "name": company_name,
+            "ticker": None,
+            "website": None,
+            "description": None,
+            "industry": None,
+            "headquarters": None,
+            "founded_year": None,
+            "status": None,
+            "employees": None
+        },
+        "financials": {
+            "revenue": None,
+            "net_income": None,
+            "assets": None,
+            "liabilities": None,
+            "equity": None,
+            "cash_flow": None,
+            "fiscal_year": None,
+            "income_statement": [],
+            "balance_sheet": [],
+            "cash_flow_statement": []
+        },
         "funding": {
             "total_raised": None,
             "latest_deal_type": None,
             "funding_rounds": [],
-            "investors": [],
-            "source": None
+            "investors": []
         },
-        
-        "market": {
-            "competitors": [],
-            "source": None
+        "key_metrics": {
+            "shares_outstanding": None,
+            "public_float": None
         },
-        
-        "latest_filings": {
-            "filings": [],
-            "source": None
-        },
-        
-        "raw_data": {
-            "edgar": edgar_data,
-            "pitchbook": pitchbook_data
-        },
-        
-        "metadata": {
-            "scraped_at": datetime.utcnow().isoformat(),
-            "edgar_success": edgar_data is not None,
-            "pitchbook_success": pitchbook_data is not None,
-            "ai_enriched": False,
-            "errors": errors
+        "latest_filings": [],
+        "insiders": [],
+        "products": [],
+        "competitors": [],
+        "_internal": {
+            "data_source": "none",
+            "is_public": None,
+            "needs_ai_enrichment": True
         }
     }
-    
-    # Merge identity data
-    if edgar_data:
-        unified["identity"]["name"] = edgar_data.get("company_name") or company_name
-        unified["identity"]["ticker"] = edgar_data.get("ticker")
-        unified["identity"]["headquarters"] = edgar_data.get("company_address")
-    
-    if pitchbook_data:
-        # Prefer PitchBook for these fields as they're more detailed
-        unified["identity"]["name"] = pitchbook_data.get("company_name") or unified["identity"]["name"]
-        unified["identity"]["website"] = pitchbook_data.get("website")
-        unified["identity"]["description"] = pitchbook_data.get("description")
-        unified["identity"]["industry"] = pitchbook_data.get("industry")
-        unified["identity"]["headquarters"] = pitchbook_data.get("headquarters") or unified["identity"]["headquarters"]
-        unified["identity"]["founded_year"] = pitchbook_data.get("founded_year")
-        unified["identity"]["status"] = pitchbook_data.get("status")
-        unified["identity"]["employees"] = pitchbook_data.get("employees")
-    
-    # Merge financial data (prioritize EDGAR for public companies)
-    if edgar_data and edgar_data.get("financial_statements"):
-        # Get most recent year's data
-        financial_statements = edgar_data["financial_statements"]
-        if financial_statements:
-            # Sort by fiscal year descending
-            sorted_years = sorted(
-                financial_statements.items(),
-                key=lambda x: x[0],
-                reverse=True
-            )
-            
-            if sorted_years:
-                latest_year, latest_data = sorted_years[0]
-                income_statement = latest_data.get("income_statement", {})
-                balance_sheet = latest_data.get("balance_sheet", {})
-                cash_flow = latest_data.get("cash_flow_statement", {})
-                
-                unified["financials"]["revenue"] = income_statement.get("Revenues")
-                unified["financials"]["net_income"] = income_statement.get("NetIncomeLoss")
-                unified["financials"]["assets"] = balance_sheet.get("Assets")
-                unified["financials"]["liabilities"] = balance_sheet.get("Liabilities")
-                unified["financials"]["equity"] = balance_sheet.get("StockholdersEquity")
-                unified["financials"]["cash_flow"] = cash_flow.get("NetCashProvidedByUsedInOperatingActivities")
-                unified["financials"]["source"] = "edgar"
-                unified["financials"]["fiscal_year"] = latest_year
-    
-    # Merge funding data (prioritize PitchBook)
-    if pitchbook_data:
-        unified["funding"]["total_raised"] = pitchbook_data.get("total_raised")
-        unified["funding"]["latest_deal_type"] = pitchbook_data.get("latest_deal_type")
-        unified["funding"]["funding_rounds"] = pitchbook_data.get("funding_rounds", [])
-        unified["funding"]["investors"] = pitchbook_data.get("investors", [])
-        unified["funding"]["source"] = "pitchbook"
-        
-        # Merge competitors (basic info from PitchBook)
-        competitors_list = pitchbook_data.get("competitors", [])
-        if competitors_list:
-            unified["market"]["competitors"] = [
-                {"name": comp, "enriched": False} for comp in competitors_list
-            ]
-            unified["market"]["source"] = "pitchbook"
-    
-    # Merge latest filings from EDGAR
-    if edgar_data and edgar_data.get("recent_filings"):
-        unified["latest_filings"]["filings"] = edgar_data["recent_filings"][:5]  # Top 5
-        unified["latest_filings"]["source"] = "edgar"
-    
-    # Log merge results
-    print(f"[MERGE] ✓ Company name: {unified['identity']['name']}")
-    print(f"[MERGE] ✓ Ticker: {unified['identity']['ticker'] or 'N/A'}")
-    print(f"[MERGE] ✓ Status: {unified['identity']['status'] or 'N/A'}")
-    print(f"[MERGE] ✓ Financials source: {unified['financials']['source'] or 'N/A'}")
-    print(f"[MERGE] ✓ Funding source: {unified['funding']['source'] or 'N/A'}")
-    print(f"[MERGE] ✓ Data quality: {data_quality}")
-    
-    return unified
 
 
+# Remove old merge function (no longer needed)
 async def _enrich_with_ai(unified_data: dict) -> dict:
     """
-    Use Gemini AI to fill missing data gaps and enrich competitor information.
-    
-    The AI will:
-    1. Fill missing identity fields (description, industry, etc.)
-    2. Enrich competitor data with detailed information
-    3. Add insights about funding and market position
-    4. Never respond with "I don't know" - either provide data or leave empty
+    Use OpenAI to enrich data based on EDGAR structure.
+    AI fills ONLY missing fields (identity, competitors).
+    AI does NOT touch financial or funding data from EDGAR.
     """
-    if not GEMINI_MODEL:
+    if not openai_client:
         return unified_data
     
     company_name = unified_data["identity"]["name"]
     
-    # Build context for AI
-    context = _build_ai_context(unified_data)
-    
-    # Create prompt for AI enrichment
-    prompt = f"""You are a financial data analyst assistant. Analyze the following company data and fill in missing information using your knowledge.
+    # Enhanced prompt with EDGAR structure understanding
+    prompt = f"""You are a Product Research Analyst AI assistant with deep knowledge of SEC filings and EDGAR data.
 
-Company: {company_name}
+Your task is to enrich company data for: **{company_name}**
 
-Current Data:
-{json.dumps(context, indent=2)}
+EDGAR DATA STRUCTURE (for your reference):
+- EDGAR provides: ticker, business_address, shares_outstanding, public_float
+- EDGAR provides: income_statement, balance_sheet, cash_flow_statement (arrays of financial data)
+- EDGAR provides: latest_filings (SEC forms like 10-K, 10-Q, 8-K)
+- EDGAR provides: insiders (executives with positions)
 
-Please provide a JSON response with the following structure. For each field:
-- If you know the answer with confidence, provide it
-- If you're uncertain or don't know, leave the field as null or empty array
-- NEVER respond with "I don't know" or similar - just omit or leave empty
-- For competitors, provide detailed intelligence if you know about them
+CURRENT DATA AVAILABLE FROM EDGAR:
+{json.dumps(unified_data, indent=2, default=str)}
 
-IMPORTANT - Total Raised Verification:
-- The current total_raised is: {context.get('total_raised', 'Not provided')}
-- If you know this is INCORRECT, provide the correct amount in the "total_raised_corrected" field
-- If you believe it's CORRECT or you don't know the correct amount, leave "total_raised_corrected" as null
-- Always provide your best estimate if the field is empty
+INSTRUCTIONS:
 
-Required JSON structure:
+1. **Identity & Basics** (fill ONLY if empty from EDGAR):
+   - description: Company overview (2-3 sentences about what they do)
+   - industry: Primary industry/sector
+   - website: Full website URL (e.g., www.company.com)
+   - founded_year: Year founded (YYYY format)
+   - status: Public/Private/Acquired (if EDGAR has ticker, usually Public)
+   - employees: Number or range
+   - If EDGAR already has headquarters/ticker, keep it as-is
+
+2. **Products** (ALWAYS provide 3-7 main products/services):
+   - Research {company_name}'s actual product portfolio
+   - Include name, category, and detailed description for each product
+   - Format: {{"name": "Product Name", "category": "Category", "description": "What it does and who uses it"}}
+   - Focus on flagship products and main revenue drivers
+
+3. **Competitor Intelligence** (ALWAYS provide 3-5 competitors):
+   - Provide competitor name, location, website, description
+   - Add strategic analysis: advantages over {company_name}, focus_areas
+   - Format focus_areas as array of 3-5 key strategic areas
+   - DO NOT include "total_raised" for competitors
+
+4. **What NOT to touch** (EDGAR provides these):
+   - DO NOT modify financials (revenue, net_income, cash_flow, etc.)
+   - DO NOT modify funding data (EDGAR doesn't have this, leave empty)
+   - DO NOT modify key_metrics (shares_outstanding, public_float from EDGAR)
+   - DO NOT modify insiders (from EDGAR SEC filings)
+   - DO NOT modify latest_filings (SEC forms from EDGAR)
+
+REQUIRED OUTPUT JSON STRUCTURE:
 {{
     "identity": {{
-        "description": "Brief company description (2-3 sentences)",
-        "industry": "Primary industry",
-        "website": "Company website URL",
-        "founded_year": "Year founded",
-        "headquarters": "City, State/Country",
-        "employees": "Number of employees (approximate)"
+        "description": "Company description (only if missing)",
+        "industry": "Industry/sector (only if missing)",
+        "website": "Website URL (only if missing)",
+        "founded_year": "YYYY (only if missing)",
+        "employees": "Number or range (only if missing)",
+        "status": "Public/Private (only if missing)"
     }},
-    "funding": {{
-        "total_raised": "Total funding raised if currently empty",
-        "total_raised_corrected": "Corrected amount if current value is wrong (or null if correct)",
-        "latest_round": "Latest funding round type"
-    }},
+    "products": [
+        {{
+            "name": "Product Name",
+            "category": "Product Category",
+            "description": "Detailed description of what it does and who it serves"
+        }}
+    ],
     "competitors": [
         {{
             "name": "Competitor name",
-            "location": "City, Country",
-            "total_raised": "Total funding raised",
-            "website": "Website URL",
-            "description": "What they do (1-2 sentences)",
-            "advantages": "What they do better than {company_name}",
+            "location": "City, State/Country",
+            "website": "https://www.competitor.com",
+            "description": "What they do (2-3 sentences)",
+            "advantages": "Key competitive advantages vs {company_name}",
             "focus_areas": ["Area 1", "Area 2", "Area 3"]
         }}
     ]
 }}
 
-Only fill in fields where you have confident knowledge. Respond with valid JSON only, no additional text."""
+RESPOND WITH VALID JSON ONLY. Provide 3-7 products and 3-5 competitors minimum."""
 
     try:
         # Generate enriched data with AI
-        print(f"[AI] 🤖 Querying Gemini for enrichment...")
-        response = await asyncio.to_thread(
-            GEMINI_MODEL.generate_content,
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.1,  # Low temperature for factual responses
-                max_output_tokens=4096,
-            )
+        print(f"[AI] 🤖 Analyzing competitors and identity with Product Research Analyst AI...")
+        response = await openai_client.chat.completions.create(
+            model=settings.openai_model or "gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a Product Research Analyst AI with deep knowledge of SEC filings and EDGAR data. Return ONLY valid JSON."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.1,
+            max_tokens=8192,
+            response_format={"type": "json_object"}
         )
         
-        # Parse AI response
-        ai_text = response.text.strip()
+        # Parse response
+        ai_text = response.choices[0].message.content.strip()
         
         # Remove markdown code blocks if present
         if ai_text.startswith("```json"):
@@ -446,11 +524,10 @@ Only fill in fields where you have confident knowledge. Respond with valid JSON 
         
         ai_data = json.loads(ai_text)
         
-        # Merge AI enrichments into unified data
+        # Apply AI enrichments - ONLY for competitors and basic identity
         unified_data = _apply_ai_enrichments(unified_data, ai_data)
-        unified_data["metadata"]["ai_enriched"] = True
         
-        print(f"[AI] ✅ Successfully enriched data with AI")
+        print(f"[AI] ✅ Successfully enriched competitors and identity fields")
         
     except json.JSONDecodeError as e:
         print(f"[AI] ⚠️  Failed to parse AI response: {e}")
@@ -462,89 +539,43 @@ Only fill in fields where you have confident knowledge. Respond with valid JSON 
     return unified_data
 
 
-def _build_ai_context(unified_data: dict) -> dict:
-    """Build context object for AI enrichment."""
-    identity = unified_data["identity"]
-    funding = unified_data["funding"]
-    competitors = unified_data["market"]["competitors"]
-    
-    # Extract competitor names
-    competitor_names = []
-    if competitors:
-        competitor_names = [
-            c["name"] if isinstance(c, dict) else c 
-            for c in competitors
-        ]
-    
-    return {
-        "company_name": identity["name"],
-        "ticker": identity["ticker"],
-        "current_description": identity["description"],
-        "current_industry": identity["industry"],
-        "current_website": identity["website"],
-        "status": identity["status"],
-        "employees": identity["employees"],
-        "founded_year": identity["founded_year"],
-        "headquarters": identity["headquarters"],
-        "total_raised": funding["total_raised"],
-        "latest_deal": funding["latest_deal_type"],
-        "known_competitors": competitor_names,
-        "has_edgar_data": unified_data["metadata"]["edgar_success"],
-        "has_pitchbook_data": unified_data["metadata"]["pitchbook_success"]
-    }
-
-
 def _apply_ai_enrichments(unified_data: dict, ai_data: dict) -> dict:
-    """Apply AI enrichments to unified data, only filling missing fields."""
+    """
+    Apply AI enrichments - ONLY for competitors and basic identity fields.
+    Does NOT touch financial or funding data.
+    """
     
-    # Enrich identity fields (only if currently missing)
+    # 1. IDENTITY ENRICHMENT - Fill ONLY empty fields
     ai_identity = ai_data.get("identity", {})
     identity = unified_data["identity"]
     
-    if not identity["description"] and ai_identity.get("description"):
-        identity["description"] = ai_identity["description"]
-        print(f"[AI] ✓ Added description")
+    fields_filled = []
     
-    if not identity["industry"] and ai_identity.get("industry"):
-        identity["industry"] = ai_identity["industry"]
-        print(f"[AI] ✓ Added industry")
+    for field in ["description", "industry", "website", "founded_year", "headquarters", "employees", "status"]:
+        if not identity.get(field) and ai_identity.get(field):
+            identity[field] = ai_identity[field]
+            fields_filled.append(field)
     
-    if not identity["website"] and ai_identity.get("website"):
-        identity["website"] = ai_identity["website"]
-        print(f"[AI] ✓ Added website")
+    if fields_filled:
+        print(f"[AI] ✓ Filled identity fields: {', '.join(fields_filled)}")
     
-    if not identity["founded_year"] and ai_identity.get("founded_year"):
-        identity["founded_year"] = ai_identity["founded_year"]
-        print(f"[AI] ✓ Added founded year")
+    # 2. PRODUCTS ENRICHMENT - Main product portfolio
+    ai_products = ai_data.get("products", [])
+    if ai_products:
+        enriched_products = []
+        
+        for ai_prod in ai_products:
+            product = {
+                "name": ai_prod.get("name", ""),
+                "category": ai_prod.get("category", ""),
+                "description": ai_prod.get("description", "")
+            }
+            enriched_products.append(product)
+        
+        unified_data["products"] = enriched_products
+        print(f"[AI] ✓ Added {len(enriched_products)} products to portfolio")
     
-    if not identity["headquarters"] and ai_identity.get("headquarters"):
-        identity["headquarters"] = ai_identity["headquarters"]
-        print(f"[AI] ✓ Added headquarters")
-    
-    if not identity["employees"] and ai_identity.get("employees"):
-        identity["employees"] = ai_identity["employees"]
-        print(f"[AI] ✓ Added employee count")
-    
-    # Enrich funding fields
-    ai_funding = ai_data.get("funding", {})
-    funding = unified_data["funding"]
-    
-    # Check if AI corrected the total raised amount
-    if ai_funding.get("total_raised_corrected"):
-        old_value = funding["total_raised"]
-        funding["total_raised"] = ai_funding["total_raised_corrected"]
-        print(f"[AI] ✓ Corrected total raised: {old_value} → {funding['total_raised']}")
-    elif not funding["total_raised"] and ai_funding.get("total_raised"):
-        funding["total_raised"] = ai_funding["total_raised"]
-        print(f"[AI] ✓ Added total raised: {funding['total_raised']}")
-    elif funding["total_raised"]:
-        print(f"[AI] ✓ Verified total raised: {funding['total_raised']} (confirmed correct)")
-    
-    if not funding["latest_deal_type"] and ai_funding.get("latest_round"):
-        funding["latest_deal_type"] = ai_funding["latest_round"]
-        print(f"[AI] ✓ Added latest round type")
-    
-    # Enrich competitors with detailed information
+    # 3. COMPETITOR ENRICHMENT - Comprehensive intelligence (NO total_raised)
     ai_competitors = ai_data.get("competitors", [])
     if ai_competitors:
         enriched_competitors = []
@@ -553,17 +584,15 @@ def _apply_ai_enrichments(unified_data: dict, ai_data: dict) -> dict:
             competitor = {
                 "name": ai_comp.get("name", ""),
                 "location": ai_comp.get("location", ""),
-                "total_raised": ai_comp.get("total_raised", ""),
                 "website": ai_comp.get("website", ""),
                 "description": ai_comp.get("description", ""),
                 "advantages": ai_comp.get("advantages", ""),
-                "focus_areas": ai_comp.get("focus_areas", []),
-                "enriched": True
+                "focus_areas": ai_comp.get("focus_areas", [])
             }
             enriched_competitors.append(competitor)
         
-        unified_data["market"]["competitors"] = enriched_competitors
-        print(f"[AI] ✓ Enriched {len(enriched_competitors)} competitors with detailed data")
+        unified_data["competitors"] = enriched_competitors
+        print(f"[AI] ✓ Enriched {len(enriched_competitors)} competitors with strategic intelligence")
     
     return unified_data
 
@@ -577,8 +606,7 @@ def _print_summary(unified_data: dict) -> None:
     identity = unified_data["identity"]
     financials = unified_data["financials"]
     funding = unified_data["funding"]
-    market = unified_data["market"]
-    metadata = unified_data["metadata"]
+    competitors = unified_data["competitors"]
     
     print(f"\n🏢 COMPANY IDENTITY:")
     print(f"   Name: {identity['name']}")
@@ -590,75 +618,75 @@ def _print_summary(unified_data: dict) -> None:
     print(f"   Website: {identity['website'] or 'N/A'}")
     print(f"   HQ: {identity['headquarters'] or 'N/A'}")
     
-    if financials['source']:
-        print(f"\n💰 FINANCIAL DATA (from {financials['source'].upper()}):")
-        print(f"   Fiscal Year: {financials['fiscal_year'] or 'N/A'}")
-        print(f"   Revenue: {financials['revenue'] or 'N/A'}")
-        print(f"   Net Income: {financials['net_income'] or 'N/A'}")
-        print(f"   Total Assets: {financials['assets'] or 'N/A'}")
-        print(f"   Cash Flow: {financials['cash_flow'] or 'N/A'}")
+    if financials.get('revenue') or len(financials.get('income_statement', [])) > 0:
+        print(f"\n💰 FINANCIAL DATA:")
+        print(f"   Fiscal Year: {financials.get('fiscal_year') or 'N/A'}")
+        print(f"   Revenue: {financials.get('revenue') or 'N/A'}")
+        print(f"   Net Income: {financials.get('net_income') or 'N/A'}")
+        print(f"   Total Assets: {financials.get('assets') or 'N/A'}")
+        print(f"   Cash Flow: {financials.get('cash_flow') or 'N/A'}")
+        print(f"   Statements: {len(financials.get('income_statement', []))} income, {len(financials.get('balance_sheet', []))} balance, {len(financials.get('cash_flow_statement', []))} cash flow rows")
     
-    if funding['source']:
-        print(f"\n🚀 FUNDING DATA (from {funding['source'].upper()}):")
-        print(f"   Total Raised: {funding['total_raised'] or 'N/A'}")
-        print(f"   Latest Deal: {funding['latest_deal_type'] or 'N/A'}")
-        print(f"   Funding Rounds: {len(funding['funding_rounds'])}")
-        print(f"   Investors: {len(funding['investors'])}")
-        if funding['investors']:
+    if funding.get('total_raised') or len(funding.get('funding_rounds', [])) > 0:
+        print(f"\n🚀 FUNDING DATA:")
+        print(f"   Total Raised: {funding.get('total_raised') or 'N/A'}")
+        print(f"   Latest Deal: {funding.get('latest_deal_type') or 'N/A'}")
+        print(f"   Funding Rounds: {len(funding.get('funding_rounds', []))}")
+        print(f"   Investors: {len(funding.get('investors', []))}")
+        if funding.get('investors'):
             print(f"   Top Investors: {', '.join(funding['investors'][:5])}")
     
-    if market['competitors']:
-        print(f"\n🏆 MARKET DATA:")
-        print(f"   Competitors: {len(market['competitors'])}")
-        
-        # Check if competitors are enriched with AI
-        is_enriched = any(
-            isinstance(c, dict) and c.get("enriched") 
-            for c in market['competitors']
-        )
-        
-        if is_enriched:
-            print(f"   Status: AI-Enriched with detailed intelligence")
-            # Show first 3 enriched competitors with details
-            for idx, comp in enumerate(market['competitors'][:3], 1):
-                if isinstance(comp, dict) and comp.get("enriched"):
-                    print(f"\n   Competitor {idx}: {comp.get('name', 'Unknown')}")
-                    if comp.get('location'):
-                        print(f"      Location: {comp['location']}")
-                    if comp.get('total_raised'):
-                        print(f"      Funding: {comp['total_raised']}")
-                    if comp.get('description'):
-                        print(f"      Description: {comp['description'][:80]}...")
-                    if comp.get('advantages'):
-                        print(f"      Advantages: {comp['advantages'][:80]}...")
-                    if comp.get('focus_areas'):
-                        print(f"      Focus: {', '.join(comp['focus_areas'][:3])}")
-        else:
-            # Simple list if not enriched
-            competitor_names = [
-                c['name'] if isinstance(c, dict) else c 
-                for c in market['competitors'][:5]
-            ]
-            print(f"   Top Competitors: {', '.join(competitor_names)}")
+    if unified_data.get("key_metrics", {}).get("shares_outstanding"):
+        print(f"\n📈 KEY METRICS:")
+        metrics = unified_data["key_metrics"]
+        print(f"   Shares Outstanding: {metrics.get('shares_outstanding') or 'N/A'}")
+        print(f"   Public Float: {metrics.get('public_float') or 'N/A'}")
     
-    if unified_data.get("latest_filings", {}).get("filings"):
-        filings = unified_data["latest_filings"]["filings"]
+    if unified_data.get("insiders") and len(unified_data["insiders"]) > 0:
+        insiders = unified_data["insiders"]
+        print(f"\n👥 INSIDERS:")
+        print(f"   Executives: {len(insiders)}")
+        for exec in insiders[:3]:
+            print(f"      • {exec.get('insider', 'N/A')} - {exec.get('position', 'N/A')}")
+    
+    if unified_data.get("products") and len(unified_data["products"]) > 0:
+        products = unified_data["products"]
+        print(f"\n🎯 PRODUCTS:")
+        print(f"   Total: {len(products)}")
+        for idx, prod in enumerate(products[:5], 1):
+            print(f"\n   {idx}. {prod.get('name', 'Unknown')}")
+            if prod.get('category'):
+                print(f"      📦 Category: {prod['category']}")
+            if prod.get('description'):
+                desc = prod['description'][:120] + "..." if len(prod.get('description', '')) > 120 else prod.get('description', '')
+                print(f"      📝 {desc}")
+    
+    if unified_data.get("latest_filings") and len(unified_data["latest_filings"]) > 0:
+        filings = unified_data["latest_filings"]
         print(f"\n📄 LATEST SEC FILINGS:")
         print(f"   Total: {len(filings)}")
         for filing in filings[:3]:
             print(f"   • {filing.get('form', 'N/A')} - {filing.get('filing_date', 'N/A')}")
     
-    print(f"\n📈 DATA QUALITY:")
-    print(f"   Overall Quality: {unified_data['data_quality'].upper()}")
-    print(f"   Sources Used: {', '.join(unified_data['sources_used']).upper()}")
-    print(f"   EDGAR Success: {'✅' if metadata['edgar_success'] else '❌'}")
-    print(f"   PitchBook Success: {'✅' if metadata['pitchbook_success'] else '❌'}")
-    print(f"   AI Enrichment: {'✅' if metadata.get('ai_enriched') else '❌'}")
-    
-    if metadata['errors']:
-        print(f"\n⚠️  WARNINGS:")
-        for error in metadata['errors']:
-            print(f"   • {error}")
+    if competitors:
+        print(f"\n🏆 COMPETITORS:")
+        print(f"   Total: {len(competitors)}")
+        
+        # Show enriched competitors with details
+        for idx, comp in enumerate(competitors[:3], 1):
+            print(f"\n   {idx}. {comp.get('name', 'Unknown')}")
+            if comp.get('location'):
+                print(f"      📍 {comp['location']}")
+            if comp.get('website'):
+                print(f"      🌐 {comp['website']}")
+            if comp.get('description'):
+                desc = comp['description'][:100] + "..." if len(comp.get('description', '')) > 100 else comp.get('description', '')
+                print(f"      📝 {desc}")
+            if comp.get('advantages'):
+                adv = comp['advantages'][:100] + "..." if len(comp.get('advantages', '')) > 100 else comp.get('advantages', '')
+                print(f"      💡 {adv}")
+            if comp.get('focus_areas'):
+                print(f"      🎯 {', '.join(comp['focus_areas'][:3])}")
     
     print(f"\n{'='*70}")
     print(f"✅ UNIFIED SCRAPING COMPLETED")
